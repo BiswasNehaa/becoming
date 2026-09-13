@@ -7,6 +7,7 @@ import { CategoryBreakdown } from "@/components/timelog/CategoryBreakdown";
 import { DayTimeline } from "@/components/timelog/DayTimeline";
 import { EntryForm } from "@/components/timelog/EntryForm";
 import { EntryList } from "@/components/timelog/EntryList";
+import { StreakBoard } from "@/components/timelog/StreakBoard";
 import { todayId, useCollection } from "@/lib/store";
 import { formatDuration, unaccountedMinutes } from "@/lib/timeMath";
 import type { TimeEntry } from "@/lib/types";
@@ -84,6 +85,16 @@ export function Dashboard() {
             </p>
           </>
         )}
+      </Card>
+
+      <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+        <CardHeader className="p-0">
+          <CardTitle className="font-display text-lg font-semibold">Streaks</CardTitle>
+          <p className="text-sm text-muted-foreground">Last 21 days, and this week&rsquo;s count &mdash; built from the log, no separate check-in needed.</p>
+        </CardHeader>
+        <CardContent className="p-0 pt-4">
+          <StreakBoard entries={allEntries} />
+        </CardContent>
       </Card>
 
       <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
