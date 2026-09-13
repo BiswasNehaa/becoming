@@ -67,6 +67,14 @@ export function makeId() {
   return crypto.randomUUID();
 }
 
+/**
+ * A day's id, built from LOCAL date parts (not toISOString, which is UTC
+ * and would roll over at the wrong wall-clock moment for anyone east of
+ * UTC — e.g. flipping to "tomorrow" mid-evening in India).
+ */
 export function todayId(date = new Date()) {
-  return date.toISOString().slice(0, 10);
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
