@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Personal tracking data — lives on disk, not in source control
+data/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

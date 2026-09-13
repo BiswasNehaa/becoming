@@ -1,52 +1,53 @@
 import { useCallback, useEffect, useState } from "react";
 
 /**
- * A small localStorage-backed data layer. Every module (habits, reading,
- * learning, nutrition, reflections...) reads and writes through this same
- * interface. When Phase 7 adds Supabase, only this file's internals change —
- * callers keep using useCollection/readCollection/writeCollection as-is.
+ * Client for the local data API (server/index.ts). Every module reads and
+ * writes through useCollection() so there's one consistent interface —
+ * when Phase 7 adds Supabase, only this file's internals change.
+ *
+ * Data lives in data/<collection>.json on disk, which means it can also be
+ * edited directly (by Claude, when you describe something in chat instead
+ * of clicking through the UI yourself) — the next fetch/reload here just
+ * picks up whatever is on disk.
  */
 
-const NAMESPACE = "ascend";
-
-function storageKey(collection: string) {
-  return `${NAMESPACE}:${collection}`;
+function apiUrl(collection: string) {
+  return `/api/collections/${collection}`;
 }
 
-export function readCollection<T>(collection: string): T[] {
-  try {
-    const raw = localStorage.getItem(storageKey(collection));
-    return raw ? (JSON.parse(raw) as T[]) : [];
-  } catch {
-    return [];
-  }
+export async function readCollection<T>(collection: string): Promise<T[]> {
+  const res = await fetch(apiUrl(collection));
+  if (!res.ok) return [];
+  return (await res.json()) as T[];
 }
 
-export function writeCollection<T>(collection: string, items: T[]) {
-  localStorage.setItem(storageKey(collection), JSON.stringify(items));
-  window.dispatchEvent(new CustomEvent(storageEventName(collection)));
-}
-
-function storageEventName(collection: string) {
-  return `ascend:collection-changed:${collection}`;
+export async function writeCollection<T>(collection: string, items: T[]): Promise<void> {
+  await fetch(apiUrl(collection), {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(items),
+  });
 }
 
 /**
- * React hook: subscribes to one collection and re-renders when it changes,
- * including changes made from other components via writeCollection.
+ * React hook: loads one collection and exposes a setter that persists
+ * changes back to the API. `refresh()` re-fetches — useful after you expect
+ * data to have changed outside this tab (e.g. Claude logged something).
  */
 export function useCollection<T>(collection: string) {
-  const [items, setItems] = useState<T[]>(() => readCollection<T>(collection));
+  const [items, setItems] = useState<T[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    const next = await readCollection<T>(collection);
+    setItems(next);
+    setLoading(false);
+  }, [collection]);
 
   useEffect(() => {
-    const handler = () => setItems(readCollection<T>(collection));
-    window.addEventListener(storageEventName(collection), handler);
-    window.addEventListener("storage", handler);
-    return () => {
-      window.removeEventListener(storageEventName(collection), handler);
-      window.removeEventListener("storage", handler);
-    };
-  }, [collection]);
+    refresh();
+  }, [refresh]);
 
   const setAndPersist = useCallback(
     (next: T[] | ((prev: T[]) => T[])) => {
@@ -59,7 +60,7 @@ export function useCollection<T>(collection: string) {
     [collection],
   );
 
-  return [items, setAndPersist] as const;
+  return { items, setItems: setAndPersist, loading, refresh };
 }
 
 export function makeId() {
