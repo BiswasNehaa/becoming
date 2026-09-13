@@ -1,0 +1,205 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system definition.
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-primary -> bg-primary, text-primary).
+ *
+ * The :root and .dark blocks define the actual color values using oklch.
+ *
+ * To add a new semantic color:
+ * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-line: var(--line);
+  --color-glow: var(--glow);
+  --color-glow-foreground: var(--glow-foreground);
+  --color-sage: var(--sage);
+  --color-amber: var(--amber);
+  --color-rose: var(--rose);
+  --color-sky: var(--sky);
+  --color-violet: var(--violet);
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --radius: 0.625rem;
+  --paper: oklch(0.975 0.012 275);
+  --ink: oklch(0.22 0.035 275);
+  --muted: oklch(0.52 0.035 274);
+  --line: oklch(0.9 0.024 275);
+  --glow: oklch(0.59 0.22 275);
+  --glow-foreground: oklch(0.99 0.005 275);
+  --sage: oklch(0.73 0.18 163);
+  --amber: oklch(0.83 0.17 86);
+  --rose: oklch(0.7 0.2 8);
+  --sky: oklch(0.74 0.15 220);
+  --violet: oklch(0.69 0.18 302);
+  --glass-bg: color-mix(in oklab, white 62%, transparent);
+  --glass-border: color-mix(in oklab, white 78%, var(--line));
+  --shadow-glass:
+    0 1px 0 color-mix(in oklab, white 90%, transparent) inset,
+    0 18px 42px -22px oklch(0.33 0.08 275 / 0.32);
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--glass-bg);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--glow);
+  --primary-foreground: var(--glow-foreground);
+  --secondary: oklch(0.94 0.022 275);
+  --secondary-foreground: var(--ink);
+  --muted-foreground: var(--muted);
+  --accent: oklch(0.93 0.03 275);
+  --accent-foreground: var(--ink);
+  --destructive: var(--rose);
+  --destructive-foreground: var(--glow-foreground);
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--glow);
+  --chart-1: var(--glow);
+  --chart-2: var(--sage);
+  --chart-3: var(--sky);
+  --chart-4: var(--violet);
+  --chart-5: var(--amber);
+}
+
+.dark {
+  --paper: oklch(0.16 0.03 275);
+  --ink: oklch(0.95 0.015 275);
+  --muted: oklch(0.7 0.035 275);
+  --line: oklch(0.3 0.04 275);
+  --glow: oklch(0.74 0.18 275);
+  --glow-foreground: oklch(0.16 0.03 275);
+  --sage: oklch(0.76 0.16 163);
+  --amber: oklch(0.84 0.16 86);
+  --rose: oklch(0.78 0.16 8);
+  --sky: oklch(0.8 0.12 220);
+  --violet: oklch(0.78 0.15 302);
+  --glass-bg: color-mix(in oklab, var(--paper) 80%, transparent);
+  --glass-border: color-mix(in oklab, var(--ink) 14%, transparent);
+  --shadow-glass:
+    0 1px 0 color-mix(in oklab, var(--ink) 8%, transparent) inset,
+    0 18px 42px -22px oklch(0.03 0.02 275 / 0.7);
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--glass-bg);
+  --card-foreground: var(--ink);
+  --popover: oklch(0.2 0.035 275);
+  --popover-foreground: var(--ink);
+  --primary: var(--glow);
+  --primary-foreground: var(--glow-foreground);
+  --secondary: oklch(0.23 0.035 275);
+  --secondary-foreground: var(--ink);
+  --muted-foreground: var(--muted);
+  --accent: oklch(0.24 0.04 275);
+  --accent-foreground: var(--ink);
+  --destructive: var(--rose);
+  --destructive-foreground: var(--glow-foreground);
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--glow);
+  --chart-1: var(--glow);
+  --chart-2: var(--sage);
+  --chart-3: var(--sky);
+  --chart-4: var(--violet);
+  --chart-5: var(--amber);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+  }
+}
+
+@utility glass-panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: blur(18px);
+}
+
+@utility rainbow-bar {
+  background-image: linear-gradient(90deg, var(--sage), var(--sky), var(--glow), var(--violet), var(--rose));
+}
+
+@utility ambient-field {
+  background:
+    linear-gradient(120deg, color-mix(in oklab, var(--sky) 15%, transparent), transparent 35%),
+    linear-gradient(240deg, color-mix(in oklab, var(--violet) 13%, transparent), transparent 40%),
+    linear-gradient(12deg, color-mix(in oklab, var(--sage) 10%, transparent), transparent 45%);
+}
+
+@utility subtle-rise {
+  animation: subtle-rise 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes subtle-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
