@@ -27,7 +27,7 @@ export function MacroSummary({ totals, targets }: { totals: MacroTotals; targets
     <div className="space-y-4">
       {ROWS.map((row) => {
         const value = totals[row.key];
-        const target = targets[row.key as keyof NutritionTargets];
+        const target = targets[row.key];
         const status = macroStatus(value, target, row.kind);
         const pct = target > 0 ? Math.min(100, Math.round((value / target) * 100)) : 0;
         return (

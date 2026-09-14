@@ -1,27 +1,43 @@
 import { useCallback, useEffect, useState } from "react";
 
+import { isHosted, supabase } from "@/lib/supabaseClient";
+
 /**
- * Client for the local data API (server/index.ts). Every module reads and
- * writes through useCollection() so there's one consistent interface —
- * when Phase 7 adds Supabase, only this file's internals change.
+ * The data layer every module reads and writes through. Two backends,
+ * same interface:
  *
- * Data lives in data/<collection>.json on disk, which means it can also be
- * edited directly (by Claude, when you describe something in chat instead
- * of clicking through the UI yourself) — the next fetch/reload here just
- * picks up whatever is on disk.
+ * - Local (no Supabase configured): a small Express API writing
+ *   data/<collection>.json on disk (server/index.ts) — single-user, this
+ *   machine only. Also what Claude edits directly when you describe
+ *   something in chat instead of using the form.
+ * - Hosted (VITE_SUPABASE_URL/ANON_KEY set): one Supabase table
+ *   (`records`, see supabase/schema.sql) holding every collection's rows,
+ *   scoped by user_id + Row Level Security so each account only ever sees
+ *   its own data.
+ *
+ * Every item in every collection needs a stable string `id` — the hosted
+ * backend upserts/deletes by it.
  */
+
+type WithId = { id: string };
 
 function apiUrl(collection: string) {
   return `/api/collections/${collection}`;
 }
 
-export async function readCollection<T>(collection: string): Promise<T[]> {
+async function currentUserId(): Promise<string | null> {
+  if (!supabase) return null;
+  const { data } = await supabase.auth.getUser();
+  return data.user?.id ?? null;
+}
+
+async function readCollectionLocal<T>(collection: string): Promise<T[]> {
   const res = await fetch(apiUrl(collection));
   if (!res.ok) return [];
   return (await res.json()) as T[];
 }
 
-export async function writeCollection<T>(collection: string, items: T[]): Promise<void> {
+async function writeCollectionLocal<T>(collection: string, items: T[]): Promise<void> {
   await fetch(apiUrl(collection), {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -29,12 +45,53 @@ export async function writeCollection<T>(collection: string, items: T[]): Promis
   });
 }
 
+async function readCollectionHosted<T>(collection: string): Promise<T[]> {
+  if (!supabase) return [];
+  const uid = await currentUserId();
+  if (!uid) return [];
+  const { data, error } = await supabase.from("records").select("data").eq("user_id", uid).eq("collection", collection);
+  if (error || !data) return [];
+  return data.map((row) => row.data as T);
+}
+
+async function writeCollectionHosted<T extends WithId>(collection: string, items: T[]): Promise<void> {
+  if (!supabase) return;
+  const uid = await currentUserId();
+  if (!uid) return;
+
+  const { data: existing } = await supabase.from("records").select("id").eq("user_id", uid).eq("collection", collection);
+  const existingIds = new Set((existing ?? []).map((r) => r.id as string));
+  const nextIds = new Set(items.map((i) => i.id));
+  const staleIds = [...existingIds].filter((id) => !nextIds.has(id));
+
+  if (items.length > 0) {
+    await supabase
+      .from("records")
+      .upsert(
+        items.map((item) => ({ user_id: uid, collection, id: item.id, data: item })),
+        { onConflict: "user_id,collection,id" },
+      );
+  }
+  if (staleIds.length > 0) {
+    await supabase.from("records").delete().eq("user_id", uid).eq("collection", collection).in("id", staleIds);
+  }
+}
+
+export async function readCollection<T>(collection: string): Promise<T[]> {
+  return isHosted ? readCollectionHosted<T>(collection) : readCollectionLocal<T>(collection);
+}
+
+export async function writeCollection<T extends WithId>(collection: string, items: T[]): Promise<void> {
+  return isHosted ? writeCollectionHosted(collection, items) : writeCollectionLocal(collection, items);
+}
+
 /**
  * React hook: loads one collection and exposes a setter that persists
- * changes back to the API. `refresh()` re-fetches — useful after you expect
- * data to have changed outside this tab (e.g. Claude logged something).
+ * changes back to whichever backend is active. `refresh()` re-fetches —
+ * useful after you expect data to have changed outside this tab (e.g.
+ * Claude logged something, or you edited it on another device).
  */
-export function useCollection<T>(collection: string) {
+export function useCollection<T extends WithId>(collection: string) {
   const [items, setItems] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
 

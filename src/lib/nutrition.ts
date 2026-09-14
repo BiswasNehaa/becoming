@@ -27,6 +27,10 @@ export type FoodEntry = {
 };
 
 export type NutritionTargets = {
+  /** Always "default" — one targets doc per user, kept as a single-item
+   * collection so it fits the same generic id-based store as everything
+   * else instead of needing its own special case. */
+  id: "default";
   calories: number;
   proteinG: number;
   carbsG: number;
@@ -35,6 +39,7 @@ export type NutritionTargets = {
 };
 
 export const DEFAULT_TARGETS: NutritionTargets = {
+  id: "default",
   calories: 2000,
   proteinG: 100,
   carbsG: 250,

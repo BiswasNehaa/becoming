@@ -4,7 +4,20 @@ A private habit, learning, reading, and nutrition tracker, built in phases. The 
 
 ## Stack
 
-Vite + React 19 + TypeScript, React Router, Tailwind CSS v4, shadcn/ui. Data lives in a small local JSON store served by a local API (`server/`) — see `src/lib/store.ts` for the client-side interface every module reads and writes through. A later phase swaps that backend for Supabase (Postgres + Auth) so each person gets their own private, always-on account.
+Vite + React 19 + TypeScript, React Router, Tailwind CSS v4, shadcn/ui. Every module reads and writes through one interface (`src/lib/store.ts`) backed by either:
+
+- **Local** (default, no setup) — a small Express API (`server/`) writing `data/<collection>.json` on disk. Single machine, no account.
+- **Hosted** (once `.env.local` has Supabase credentials) — one Supabase table (`records`, see `supabase/schema.sql`) with email/password sign-in and Row Level Security, so each account only ever sees its own data.
+
+### Switching to hosted mode
+
+1. Create a free project at [supabase.com](https://supabase.com).
+2. In the Supabase dashboard: **SQL Editor > New query**, paste the contents of `supabase/schema.sql`, run it once.
+3. In **Project Settings > API**, copy the **Project URL** and the **anon public** key.
+4. Copy `.env.example` to `.env.local` and paste those two values in.
+5. Restart `npm run dev`. The app now asks for sign-in, and data is private per account.
+
+Leaving `.env.local` absent keeps everything local-only — nothing else about the app changes.
 
 ## Development
 
@@ -24,4 +37,5 @@ This starts both the Vite dev server and the local data API together.
 - [x] Reflections — mood, quick check-in, learned / improve-tomorrow notes
 - [x] Reading tracker — book progress, knowledge vault
 - [x] Learning / AI roadmap tracker — Foundations/AI/Engineering, hours & streak from the time log
-- [ ] Auth + Supabase (multi-user, hosted) — needed before this is usable by more than one person on one machine
+- [x] Auth + Supabase — sign-in and hosted storage are built; **activates once `.env.local` is set up** (see above)
+- [ ] Deploy somewhere reachable from a phone (Vercel/Netlify) — last step for "check from anywhere"
