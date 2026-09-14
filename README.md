@@ -17,11 +17,11 @@ This starts both the Vite dev server and the local data API together.
 
 ## Build status
 
-- [x] Phase 0 — scaffold, design system, navigation shell
-- [ ] Phase 1 — habits & hobbies + streaks
-- [ ] Phase 2 — reading tracker
-- [ ] Phase 3 — learning / AI roadmap tracker
-- [ ] Phase 4 — nutrition tracker
-- [ ] Phase 5 — daily check-in & reflections
-- [ ] Phase 6 — dashboard
-- [ ] Phase 7 — auth + Supabase (multi-user, hosted)
+- [x] Scaffold — design system, navigation shell
+- [x] Daily time log (dashboard) — full 24h accounting across 11 categories, day navigation
+- [x] Streaks & consistency — per-practice streak and weekly count, derived from the time log
+- [x] Nutrition — food log by meal, macro totals vs. targets
+- [x] Reflections — mood, quick check-in, learned / improve-tomorrow notes
+- [ ] Reading tracker — book progress, knowledge vault
+- [ ] Learning / AI roadmap tracker
+- [ ] Auth + Supabase (multi-user, hosted) — needed before this is usable by more than one person on one machine
