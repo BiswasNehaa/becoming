@@ -22,6 +22,6 @@ This starts both the Vite dev server and the local data API together.
 - [x] Streaks & consistency — per-practice streak and weekly count, derived from the time log
 - [x] Nutrition — food log by meal, macro totals vs. targets
 - [x] Reflections — mood, quick check-in, learned / improve-tomorrow notes
-- [ ] Reading tracker — book progress, knowledge vault
-- [ ] Learning / AI roadmap tracker
+- [x] Reading tracker — book progress, knowledge vault
+- [x] Learning / AI roadmap tracker — Foundations/AI/Engineering, hours & streak from the time log
 - [ ] Auth + Supabase (multi-user, hosted) — needed before this is usable by more than one person on one machine

@@ -2,7 +2,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import { AppShell } from "@/components/layout/AppShell";
 import { Dashboard } from "@/pages/Dashboard";
-import { Hobbies } from "@/pages/Hobbies";
 import { Learning } from "@/pages/Learning";
 import { Nutrition } from "@/pages/Nutrition";
 import { Reading } from "@/pages/Reading";
@@ -16,7 +15,6 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="learning" element={<Learning />} />
           <Route path="reading" element={<Reading />} />
-          <Route path="hobbies" element={<Hobbies />} />
           <Route path="nutrition" element={<Nutrition />} />
           <Route path="reflections" element={<Reflections />} />
         </Route>
