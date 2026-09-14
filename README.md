@@ -19,6 +19,15 @@ Vite + React 19 + TypeScript, React Router, Tailwind CSS v4, shadcn/ui. Every mo
 
 Leaving `.env.local` absent keeps everything local-only — nothing else about the app changes.
 
+### Deploying (for phone/anywhere access)
+
+Hosted mode (above) is required first — a static host has no server to run `server/`'s local API. Once `.env.local` is set:
+
+1. Push this repo to GitHub (already done).
+2. Import it on [vercel.com](https://vercel.com) or [netlify.com](https://netlify.com) (both have a free tier; sign in with GitHub, pick this repo).
+3. Add the same two `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` values as environment variables in that host's project settings.
+4. Deploy. `vercel.json` / `public/_redirects` are already in the repo so client-side routing (`/nutrition`, `/reading`, etc.) works correctly on either host.
+
 ## Development
 
 ```sh
@@ -38,4 +47,4 @@ This starts both the Vite dev server and the local data API together.
 - [x] Reading tracker — book progress, knowledge vault
 - [x] Learning / AI roadmap tracker — Foundations/AI/Engineering, hours & streak from the time log
 - [x] Auth + Supabase — sign-in and hosted storage are built; **activates once `.env.local` is set up** (see above)
-- [ ] Deploy somewhere reachable from a phone (Vercel/Netlify) — last step for "check from anywhere"
+- [x] Deploy config (Vercel/Netlify SPA rewrites) — ready; the deploy itself needs a Vercel/Netlify account, so it's the one remaining manual step
