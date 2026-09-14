@@ -1,36 +1,24 @@
 import { useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DayNavHeader } from "@/components/DayNavHeader";
 import { CategoryBreakdown } from "@/components/timelog/CategoryBreakdown";
 import { DayTimeline } from "@/components/timelog/DayTimeline";
 import { EntryForm } from "@/components/timelog/EntryForm";
 import { EntryList } from "@/components/timelog/EntryList";
 import { StreakBoard } from "@/components/timelog/StreakBoard";
-import { todayId, useCollection } from "@/lib/store";
+import { useDayNav } from "@/hooks/useDayNav";
+import { useCollection } from "@/lib/store";
 import { formatDuration, unaccountedMinutes } from "@/lib/timeMath";
 import type { TimeEntry } from "@/lib/types";
 
-function shiftDate(dateId: string, days: number): string {
-  const d = new Date(`${dateId}T00:00:00`);
-  d.setDate(d.getDate() + days);
-  return todayId(d);
-}
-
-function formatDateLabel(dateId: string): string {
-  const d = new Date(`${dateId}T00:00:00`);
-  return d.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
-}
-
 export function Dashboard() {
-  const [viewDate, setViewDate] = useState(todayId());
+  const { viewDate, isToday, label, goPrev, goNext, goToday } = useDayNav();
   const { items: allEntries, setItems: setAllEntries, loading } = useCollection<TimeEntry>("time_entries");
   const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
 
   const dayEntries = useMemo(() => allEntries.filter((e) => e.date === viewDate), [allEntries, viewDate]);
   const unaccounted = unaccountedMinutes(dayEntries);
-  const isToday = viewDate === todayId();
 
   function saveEntry(entry: TimeEntry) {
     setAllEntries((prev) => {
@@ -48,25 +36,7 @@ export function Dashboard() {
   return (
     <div className="subtle-rise space-y-5">
       <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">{isToday ? "Today" : "Viewing"}</p>
-            <h2 className="mt-1 font-display text-2xl font-semibold">{formatDateLabel(viewDate)}</h2>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" aria-label="Previous day" onClick={() => setViewDate((d) => shiftDate(d, -1))}>
-              <ChevronLeft className="size-4" />
-            </Button>
-            {!isToday && (
-              <Button variant="outline" size="sm" onClick={() => setViewDate(todayId())}>
-                Today
-              </Button>
-            )}
-            <Button variant="outline" size="icon" aria-label="Next day" onClick={() => setViewDate((d) => shiftDate(d, 1))}>
-              <ChevronRight className="size-4" />
-            </Button>
-          </div>
-        </div>
+        <DayNavHeader label={label} isToday={isToday} onPrev={goPrev} onNext={goNext} onToday={goToday} />
 
         {loading ? (
           <p className="text-sm text-muted-foreground">Loading…</p>
