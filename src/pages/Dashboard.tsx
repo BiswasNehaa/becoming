@@ -2,6 +2,10 @@ import { useMemo, useState } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DayNavHeader } from "@/components/DayNavHeader";
+import { LearningSnapshot } from "@/components/dashboard/LearningSnapshot";
+import { NutritionSnapshot } from "@/components/dashboard/NutritionSnapshot";
+import { ReadingSnapshot } from "@/components/dashboard/ReadingSnapshot";
+import { ReflectionSnapshot } from "@/components/dashboard/ReflectionSnapshot";
 import { CategoryBreakdown } from "@/components/timelog/CategoryBreakdown";
 import { DayTimeline } from "@/components/timelog/DayTimeline";
 import { EntryForm } from "@/components/timelog/EntryForm";
@@ -61,6 +65,13 @@ export function Dashboard() {
           </>
         )}
       </Card>
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <NutritionSnapshot />
+        <ReadingSnapshot />
+        <LearningSnapshot />
+        <ReflectionSnapshot />
+      </div>
 
       <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
         <CardHeader className="p-0">
