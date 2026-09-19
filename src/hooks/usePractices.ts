@@ -10,8 +10,8 @@ import { makeId, useCollection } from "@/lib/store";
 export function usePractices() {
   const { items: practices, setItems, loading } = useCollection<Practice>("practices");
 
-  function addPractice(label: string, icon: PracticeIconKey) {
-    const next: Practice = { id: makeId(), label, icon, color: paletteColor(practices.length) };
+  function addPractice(label: string, icon: PracticeIconKey, targetMinutes?: number) {
+    const next: Practice = { id: makeId(), label, icon, color: paletteColor(practices.length), targetMinutes };
     setItems([...practices, next]);
   }
 

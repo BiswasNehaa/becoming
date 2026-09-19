@@ -15,7 +15,7 @@ export function StreakBoard({
 }: {
   entries: TimeEntry[];
   practices: Practice[];
-  onAddPractice: (label: string, icon: PracticeIconKey) => void;
+  onAddPractice: (label: string, icon: PracticeIconKey, targetMinutes?: number) => void;
   onRemovePractice: (id: string) => void;
 }) {
   const days = lastDateIds(STRIP_DAYS);

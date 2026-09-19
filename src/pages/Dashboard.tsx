@@ -12,7 +12,7 @@ import { PersonalScoreCard } from "@/components/dashboard/PersonalScoreCard";
 import { QuickAddDialog } from "@/components/dashboard/QuickAddDialog";
 import { ReadingSnapshot } from "@/components/dashboard/ReadingSnapshot";
 import { ReflectionSnapshot } from "@/components/dashboard/ReflectionSnapshot";
-import { TodayFocusList } from "@/components/dashboard/TodayFocusList";
+import { focusStatus, TodayFocusList } from "@/components/dashboard/TodayFocusList";
 import { TodoList } from "@/components/dashboard/TodoList";
 import { WeeklyReportCard } from "@/components/dashboard/WeeklyReportCard";
 import { CategoryBreakdown } from "@/components/timelog/CategoryBreakdown";
@@ -47,6 +47,10 @@ export function Dashboard() {
 
   const practicesDoneToday = practices.filter((p) => dayEntries.some((e) => e.categoryId === p.id)).length;
   const progressPct = practices.length > 0 ? Math.round((practicesDoneToday / practices.length) * 100) : 0;
+  const focusDoneToday = practices.filter((p) => {
+    const minutes = dayEntries.filter((e) => e.categoryId === p.id).reduce((sum, e) => sum + Math.max(0, e.endMin - e.startMin), 0);
+    return focusStatus(minutes, p.targetMinutes).label === "complete" || (!p.targetMinutes && minutes > 0);
+  }).length;
   const overallStreak = useMemo(() => computeOverallDayStreak(practices.map((p) => p.id), allEntries), [practices, allEntries]);
 
   function saveEntry(entry: TimeEntry) {
@@ -177,23 +181,28 @@ export function Dashboard() {
         </Card>
       </div>
 
-      <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
-        <CardHeader className="p-0 pb-4">
-          <CardTitle className="font-display text-lg font-semibold">Today&rsquo;s focus</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <TodayFocusList practices={practices} dayEntries={dayEntries} />
-        </CardContent>
-      </Card>
+      <div className="grid gap-5 lg:grid-cols-2">
+        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+          <CardHeader className="flex-row items-center justify-between p-0 pb-4 space-y-0">
+            <CardTitle className="font-display text-lg font-semibold">Today&rsquo;s focus</CardTitle>
+            <span className="text-xs text-muted-foreground">
+              Scheduled {practices.length} &middot; Done {focusDoneToday}
+            </span>
+          </CardHeader>
+          <CardContent className="p-0">
+            <TodayFocusList practices={practices} dayEntries={dayEntries} />
+          </CardContent>
+        </Card>
 
-      <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
-        <CardHeader className="p-0">
-          <CardTitle className="font-display text-lg font-semibold">To-do</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0 pt-4">
-          <TodoList />
-        </CardContent>
-      </Card>
+        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+          <CardHeader className="p-0">
+            <CardTitle className="font-display text-lg font-semibold">To-do</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0 pt-4">
+            <TodoList />
+          </CardContent>
+        </Card>
+      </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <NutritionSnapshot />

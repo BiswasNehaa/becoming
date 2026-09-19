@@ -62,12 +62,15 @@ export function paletteColor(index: number): string {
 
 /** A person's own list of deliberate practices worth a streak on — not
  * every hobby fits guitar/chess/crochet, so this is fully user-managed
- * rather than a fixed list. */
+ * rather than a fixed list. `targetMinutes` is optional: without it, a
+ * practice just tracks "did it happen"; with it, Today's focus can show
+ * real progress against a goal instead of a plain yes/no. */
 export type Practice = {
   id: string;
   label: string;
   icon: PracticeIconKey;
   color: string;
+  targetMinutes?: number;
 };
 
 export function practiceToCategory(practice: Practice): Category {
