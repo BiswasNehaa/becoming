@@ -70,18 +70,6 @@ export type Practice = {
   color: string;
 };
 
-// What a brand-new account starts with — fully editable/removable, not a
-// permanent list. See usePractices(): this is only ever a fallback shown
-// until the person customizes it, never force-written to their data.
-export const DEFAULT_PRACTICES: Practice[] = [
-  { id: "learning", label: "AI Learning", icon: "brain", color: paletteColor(0) },
-  { id: "reading", label: "Reading", icon: "book", color: paletteColor(1) },
-  { id: "guitar", label: "Guitar", icon: "music", color: paletteColor(2) },
-  { id: "chess", label: "Chess", icon: "puzzle", color: paletteColor(3) },
-  { id: "crochet", label: "Crochet", icon: "sparkles", color: paletteColor(4) },
-  { id: "exercise", label: "Exercise", icon: "dumbbell", color: paletteColor(5) },
-];
-
 export function practiceToCategory(practice: Practice): Category {
   return { id: practice.id, label: practice.label, icon: PRACTICE_ICONS[practice.icon], color: practice.color };
 }

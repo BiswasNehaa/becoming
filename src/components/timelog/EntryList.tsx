@@ -1,6 +1,5 @@
 import { Pencil, Trash2 } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { getCategory, type Category } from "@/lib/categories";
 import { formatClock, formatDuration, sortByStart } from "@/lib/timeMath";
 import type { TimeEntry } from "@/lib/types";
@@ -28,20 +27,30 @@ export function EntryList({
         const category = getCategory(entry.categoryId, categories);
         const Icon = category.icon;
         return (
-          <li key={entry.id} className="flex items-center gap-3 py-2.5">
-            <Icon className="size-4 shrink-0" style={{ color: category.color }} />
-            <span className="w-28 shrink-0 font-mono text-xs text-muted-foreground">
+          <li key={entry.id} className="group flex items-center gap-2.5 py-1.5">
+            <Icon className="size-3.5 shrink-0" style={{ color: category.color }} />
+            <span className="w-24 shrink-0 text-[11px] tabular-nums text-muted-foreground">
               {formatClock(entry.startMin)}–{formatClock(entry.endMin)}
             </span>
-            <span className="w-32 shrink-0 truncate text-sm font-medium">{category.label}</span>
-            <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">{entry.note}</span>
-            <span className="shrink-0 text-xs text-muted-foreground">{formatDuration(entry.endMin - entry.startMin)}</span>
-            <Button type="button" variant="ghost" size="icon" aria-label="Edit entry" onClick={() => onEdit(entry)}>
+            <span className="w-28 shrink-0 truncate text-sm font-medium">{category.label}</span>
+            <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground">{entry.note}</span>
+            <span className="shrink-0 text-[11px] tabular-nums text-muted-foreground">{formatDuration(entry.endMin - entry.startMin)}</span>
+            <button
+              type="button"
+              aria-label="Edit entry"
+              onClick={() => onEdit(entry)}
+              className="shrink-0 rounded-md p-1 text-muted-foreground opacity-0 hover:text-foreground group-hover:opacity-100"
+            >
               <Pencil className="size-3.5" />
-            </Button>
-            <Button type="button" variant="ghost" size="icon" aria-label="Delete entry" onClick={() => onDelete(entry.id)}>
+            </button>
+            <button
+              type="button"
+              aria-label="Delete entry"
+              onClick={() => onDelete(entry.id)}
+              className="shrink-0 rounded-md p-1 text-muted-foreground opacity-0 hover:text-destructive group-hover:opacity-100"
+            >
               <Trash2 className="size-3.5" />
-            </Button>
+            </button>
           </li>
         );
       })}

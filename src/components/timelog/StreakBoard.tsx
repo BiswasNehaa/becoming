@@ -24,7 +24,10 @@ export function StreakBoard({
   return (
     <div>
       <PracticeManager practices={practices} onAdd={onAddPractice} onRemove={onRemovePractice} />
-      <div className="space-y-1">
+      {practices.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No streaks yet &mdash; add whatever you actually want to track above.</p>
+      ) : (
+        <div className="space-y-1">
         {practices.map((practice) => {
           const streak = computeCategoryStreak(practice.id, entries);
           const loggedDates = loggedDatesForCategory(practice.id, entries);
@@ -59,7 +62,8 @@ export function StreakBoard({
             </div>
           );
         })}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

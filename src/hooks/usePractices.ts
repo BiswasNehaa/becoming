@@ -1,15 +1,14 @@
-import { DEFAULT_PRACTICES, paletteColor, type Practice, type PracticeIconKey } from "@/lib/practices";
+import { paletteColor, type Practice, type PracticeIconKey } from "@/lib/practices";
 import { makeId, useCollection } from "@/lib/store";
 
 /**
- * A person's own list of streak-worthy practices. Starts out showing
- * DEFAULT_PRACTICES as a working default — nothing is written to their
- * account until they actually add or remove one, at which point it
- * becomes their real, fully custom list.
+ * A person's own list of streak-worthy practices. Starts genuinely empty —
+ * no pre-picked hobbies, since this app is for anyone and what's worth a
+ * streak (guitar, DSA, running, whatever) is entirely personal. Each
+ * account only ever has what they themselves added.
  */
 export function usePractices() {
-  const { items, setItems, loading } = useCollection<Practice>("practices");
-  const practices = items.length > 0 ? items : DEFAULT_PRACTICES;
+  const { items: practices, setItems, loading } = useCollection<Practice>("practices");
 
   function addPractice(label: string, icon: PracticeIconKey) {
     const next: Practice = { id: makeId(), label, icon, color: paletteColor(practices.length) };
