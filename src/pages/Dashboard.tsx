@@ -140,6 +140,42 @@ export function Dashboard() {
       </Card>
 
       <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+        <CardHeader className="p-0">
+          <CardTitle className="font-display text-lg font-semibold">{editingEntry ? "Edit entry" : "Log a block of time"}</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0 pt-4">
+          <EntryForm
+            date={viewDate}
+            existingEntries={dayEntries}
+            editingEntry={editingEntry}
+            categories={allCategories}
+            onSave={saveEntry}
+            onCancelEdit={() => setEditingEntry(null)}
+          />
+        </CardContent>
+      </Card>
+
+      <div className="grid gap-5 lg:grid-cols-2">
+        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+          <CardHeader className="p-0">
+            <CardTitle className="font-display text-lg font-semibold">Entries</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0 pt-4">
+            <EntryList entries={dayEntries} categories={allCategories} onEdit={setEditingEntry} onDelete={deleteEntry} />
+          </CardContent>
+        </Card>
+
+        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+          <CardHeader className="p-0">
+            <CardTitle className="font-display text-lg font-semibold">Where the time went</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0 pt-4">
+            <CategoryBreakdown entries={dayEntries} categories={allCategories} />
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
         <CardHeader className="p-0 pb-4">
           <CardTitle className="font-display text-lg font-semibold">Today&rsquo;s focus</CardTitle>
         </CardHeader>
@@ -177,42 +213,6 @@ export function Dashboard() {
       <div className="grid gap-5 lg:grid-cols-3">
         <WeeklyReportCard practices={practices} entries={allEntries} />
         <PersonalScoreCard practices={practices} entries={allEntries} />
-      </div>
-
-      <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
-        <CardHeader className="p-0">
-          <CardTitle className="font-display text-lg font-semibold">{editingEntry ? "Edit entry" : "Log a block of time"}</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0 pt-4">
-          <EntryForm
-            date={viewDate}
-            existingEntries={dayEntries}
-            editingEntry={editingEntry}
-            categories={allCategories}
-            onSave={saveEntry}
-            onCancelEdit={() => setEditingEntry(null)}
-          />
-        </CardContent>
-      </Card>
-
-      <div className="grid gap-5 lg:grid-cols-2">
-        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
-          <CardHeader className="p-0">
-            <CardTitle className="font-display text-lg font-semibold">Entries</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0 pt-4">
-            <EntryList entries={dayEntries} categories={allCategories} onEdit={setEditingEntry} onDelete={deleteEntry} />
-          </CardContent>
-        </Card>
-
-        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
-          <CardHeader className="p-0">
-            <CardTitle className="font-display text-lg font-semibold">Where the time went</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0 pt-4">
-            <CategoryBreakdown entries={dayEntries} categories={allCategories} />
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
