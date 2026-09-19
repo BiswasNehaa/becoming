@@ -1,13 +1,16 @@
 import { useMemo, useState } from "react";
+import { Flame, Trophy } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DayNavHeader } from "@/components/DayNavHeader";
 import { ProgressRing } from "@/components/ProgressRing";
+import { InsightBanner } from "@/components/dashboard/InsightBanner";
 import { LearningSnapshot } from "@/components/dashboard/LearningSnapshot";
 import { NutritionSnapshot } from "@/components/dashboard/NutritionSnapshot";
 import { PersonalScoreCard } from "@/components/dashboard/PersonalScoreCard";
 import { ReadingSnapshot } from "@/components/dashboard/ReadingSnapshot";
 import { ReflectionSnapshot } from "@/components/dashboard/ReflectionSnapshot";
+import { TodayFocusList } from "@/components/dashboard/TodayFocusList";
 import { TodoList } from "@/components/dashboard/TodoList";
 import { WeeklyReportCard } from "@/components/dashboard/WeeklyReportCard";
 import { CategoryBreakdown } from "@/components/timelog/CategoryBreakdown";
@@ -19,6 +22,7 @@ import { useDayNav } from "@/hooks/useDayNav";
 import { usePractices } from "@/hooks/usePractices";
 import { CATEGORIES } from "@/lib/categories";
 import { practiceToCategory } from "@/lib/practices";
+import { computeOverallDayStreak } from "@/lib/streaks";
 import { useCollection } from "@/lib/store";
 import { formatDuration, unaccountedMinutes } from "@/lib/timeMath";
 import type { TimeEntry } from "@/lib/types";
@@ -35,6 +39,7 @@ export function Dashboard() {
 
   const practicesDoneToday = practices.filter((p) => dayEntries.some((e) => e.categoryId === p.id)).length;
   const progressPct = practices.length > 0 ? Math.round((practicesDoneToday / practices.length) * 100) : 0;
+  const overallStreak = useMemo(() => computeOverallDayStreak(practices.map((p) => p.id), allEntries), [practices, allEntries]);
 
   function saveEntry(entry: TimeEntry) {
     setAllEntries((prev) => {
@@ -53,7 +58,14 @@ export function Dashboard() {
     <div className="subtle-rise space-y-5">
       <div className="grid gap-5 lg:grid-cols-3">
         <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none lg:col-span-1">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground">{isToday ? "Today's progress" : "Progress"}</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/60 px-3 py-1 text-xs font-medium">
+              <Flame className="size-3.5 text-amber" /> {overallStreak.current}-day <span className="text-muted-foreground">consistency</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/60 px-3 py-1 text-xs font-medium">
+              <Trophy className="size-3.5 text-violet" /> {overallStreak.best}-day <span className="text-muted-foreground">best</span>
+            </span>
+          </div>
           <div className="mt-4 flex items-center gap-5">
             <ProgressRing percent={progressPct} size={104} thickness={11} color="var(--glow)">
               <span className="font-display text-2xl font-bold">{progressPct}%</span>
@@ -67,28 +79,41 @@ export function Dashboard() {
           </div>
         </Card>
 
-        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8 lg:col-span-2">
-          <DayNavHeader label={label} isToday={isToday} onPrev={goPrev} onNext={goNext} onToday={goToday} />
-
-          {loading ? (
-            <p className="text-sm text-muted-foreground">Loading…</p>
-          ) : (
-            <>
-              <DayTimeline entries={dayEntries} categories={allCategories} />
-              <p className="mt-3 text-sm text-muted-foreground">
-                {unaccounted > 0 ? (
-                  <>
-                    <span className="font-medium text-foreground">{formatDuration(unaccounted)}</span> unaccounted so far
-                    {isToday ? " today" : ""}.
-                  </>
-                ) : (
-                  "The whole day is accounted for."
-                )}
-              </p>
-            </>
-          )}
-        </Card>
+        <div className="lg:col-span-2">
+          <InsightBanner practices={practices} entries={allEntries} />
+        </div>
       </div>
+
+      <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+        <DayNavHeader label={label} isToday={isToday} onPrev={goPrev} onNext={goNext} onToday={goToday} />
+
+        {loading ? (
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        ) : (
+          <>
+            <DayTimeline entries={dayEntries} categories={allCategories} />
+            <p className="mt-3 text-sm text-muted-foreground">
+              {unaccounted > 0 ? (
+                <>
+                  <span className="font-medium text-foreground">{formatDuration(unaccounted)}</span> unaccounted so far
+                  {isToday ? " today" : ""}.
+                </>
+              ) : (
+                "The whole day is accounted for."
+              )}
+            </p>
+          </>
+        )}
+      </Card>
+
+      <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+        <CardHeader className="p-0 pb-4">
+          <CardTitle className="font-display text-lg font-semibold">Today&rsquo;s focus</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <TodayFocusList practices={practices} dayEntries={dayEntries} />
+        </CardContent>
+      </Card>
 
       <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
         <CardHeader className="p-0">

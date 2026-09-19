@@ -58,3 +58,39 @@ export function loggedDatesForCategory(categoryId: string, entries: TimeEntry[])
   }
   return dates;
 }
+
+/** Consecutive-day counts of "at least one of these practices happened" —
+ * an overall-consistency streak rather than any single practice's. `best`
+ * is the longest such run within the lookback window, not just the
+ * current one. */
+export function computeOverallDayStreak(practiceIds: string[], entries: TimeEntry[], lookbackDays = 90): { current: number; best: number } {
+  const days = lastDateIds(lookbackDays);
+  const today = days[days.length - 1];
+  const practiceSet = new Set(practiceIds);
+
+  const activeDates = new Set<string>();
+  for (const entry of entries) {
+    if (practiceSet.has(entry.categoryId)) activeDates.add(entry.date);
+  }
+
+  let idx = days.length - 1;
+  if (days[idx] === today && !activeDates.has(today)) idx--;
+  let current = 0;
+  for (; idx >= 0; idx--) {
+    if (activeDates.has(days[idx])) current++;
+    else break;
+  }
+
+  let best = 0;
+  let run = 0;
+  for (const day of days) {
+    if (activeDates.has(day)) {
+      run++;
+      best = Math.max(best, run);
+    } else {
+      run = 0;
+    }
+  }
+
+  return { current, best: Math.max(best, current) };
+}
