@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Flame, Trophy } from "lucide-react";
+import { Flame, Target, Trophy } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DayNavHeader } from "@/components/DayNavHeader";
@@ -8,6 +8,7 @@ import { InsightBanner } from "@/components/dashboard/InsightBanner";
 import { LearningSnapshot } from "@/components/dashboard/LearningSnapshot";
 import { NutritionSnapshot } from "@/components/dashboard/NutritionSnapshot";
 import { PersonalScoreCard } from "@/components/dashboard/PersonalScoreCard";
+import { QuickAddDialog } from "@/components/dashboard/QuickAddDialog";
 import { ReadingSnapshot } from "@/components/dashboard/ReadingSnapshot";
 import { ReflectionSnapshot } from "@/components/dashboard/ReflectionSnapshot";
 import { TodayFocusList } from "@/components/dashboard/TodayFocusList";
@@ -23,9 +24,15 @@ import { usePractices } from "@/hooks/usePractices";
 import { CATEGORIES } from "@/lib/categories";
 import { practiceToCategory } from "@/lib/practices";
 import { computeOverallDayStreak } from "@/lib/streaks";
-import { useCollection } from "@/lib/store";
+import { makeId, todayId, useCollection } from "@/lib/store";
 import { formatDuration, unaccountedMinutes } from "@/lib/timeMath";
 import type { TimeEntry } from "@/lib/types";
+
+function progressStatus(pct: number): { label: string; tone: string } {
+  if (pct >= 70) return { label: "on rhythm", tone: "bg-[var(--sage)]/15 text-[var(--sage)]" };
+  if (pct > 0) return { label: "building momentum", tone: "bg-[var(--sky)]/15 text-[var(--sky)]" };
+  return { label: "not started", tone: "bg-accent text-muted-foreground" };
+}
 
 export function Dashboard() {
   const { viewDate, isToday, label, goPrev, goNext, goToday } = useDayNav();
@@ -54,17 +61,32 @@ export function Dashboard() {
     if (editingEntry?.id === id) setEditingEntry(null);
   }
 
+  function quickAdd(practiceId: string) {
+    const now = new Date();
+    const end = now.getHours() * 60 + now.getMinutes();
+    const start = Math.max(0, end - 30);
+    saveEntry({ id: makeId(), date: todayId(), startMin: start, endMin: end, categoryId: practiceId });
+  }
+
+  const status = progressStatus(progressPct);
+
   return (
     <div className="subtle-rise space-y-5">
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/60 px-3 py-1 text-xs font-medium">
+          <Flame className="size-3.5 text-amber" /> {overallStreak.current}-day <span className="text-muted-foreground">consistency</span>
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/60 px-3 py-1 text-xs font-medium">
+          <Trophy className="size-3.5 text-violet" /> {overallStreak.best}-day <span className="text-muted-foreground">best</span>
+        </span>
+        <QuickAddDialog practices={practices} onQuickAdd={quickAdd} />
+      </div>
+
       <div className="grid gap-5 lg:grid-cols-3">
         <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none lg:col-span-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/60 px-3 py-1 text-xs font-medium">
-              <Flame className="size-3.5 text-amber" /> {overallStreak.current}-day <span className="text-muted-foreground">consistency</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/60 px-3 py-1 text-xs font-medium">
-              <Trophy className="size-3.5 text-violet" /> {overallStreak.best}-day <span className="text-muted-foreground">best</span>
-            </span>
+          <div className="flex items-center justify-between">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">Daily progress</p>
+            <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${status.tone}`}>{status.label}</span>
           </div>
           <div className="mt-4 flex items-center gap-5">
             <ProgressRing percent={progressPct} size={104} thickness={11} color="var(--glow)">
@@ -74,8 +96,18 @@ export function Dashboard() {
               <p className="font-display text-lg font-semibold">
                 {practicesDoneToday} of {practices.length}
               </p>
-              <p className="mt-1 text-sm text-muted-foreground">practices logged {isToday ? "today" : "that day"}</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {practices.length === 0
+                  ? "Add a streak to track"
+                  : practicesDoneToday === practices.length
+                    ? `All planned practices logged ${isToday ? "today" : "that day"}.`
+                    : `practices logged ${isToday ? "today" : "that day"}`}
+              </p>
             </div>
+          </div>
+          <div className="mt-6 flex items-center justify-between border-t border-line pt-4">
+            <span className="text-xs text-muted-foreground">Progress, not perfection</span>
+            <Target className="size-4 text-primary" />
           </div>
         </Card>
 
