@@ -1,16 +1,18 @@
 import { Pencil, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { getCategory } from "@/lib/categories";
+import { getCategory, type Category } from "@/lib/categories";
 import { formatClock, formatDuration, sortByStart } from "@/lib/timeMath";
 import type { TimeEntry } from "@/lib/types";
 
 export function EntryList({
   entries,
+  categories,
   onEdit,
   onDelete,
 }: {
   entries: TimeEntry[];
+  categories: Category[];
   onEdit: (entry: TimeEntry) => void;
   onDelete: (id: string) => void;
 }) {
@@ -23,7 +25,7 @@ export function EntryList({
   return (
     <ul className="divide-y divide-line">
       {sorted.map((entry) => {
-        const category = getCategory(entry.categoryId);
+        const category = getCategory(entry.categoryId, categories);
         const Icon = category.icon;
         return (
           <li key={entry.id} className="flex items-center gap-3 py-2.5">

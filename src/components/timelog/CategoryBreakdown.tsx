@@ -1,11 +1,11 @@
-import { CATEGORIES, getCategory } from "@/lib/categories";
+import { getCategory, type Category } from "@/lib/categories";
 import { formatDuration, MINUTES_IN_DAY, totalsByCategory, unaccountedMinutes } from "@/lib/timeMath";
 import type { TimeEntry } from "@/lib/types";
 
-export function CategoryBreakdown({ entries }: { entries: TimeEntry[] }) {
+export function CategoryBreakdown({ entries, categories }: { entries: TimeEntry[]; categories: Category[] }) {
   const totals = totalsByCategory(entries);
   const unaccounted = unaccountedMinutes(entries);
-  const rows = CATEGORIES.filter((c) => totals[c.id]).sort((a, b) => (totals[b.id] ?? 0) - (totals[a.id] ?? 0));
+  const rows = categories.filter((c) => totals[c.id]).sort((a, b) => (totals[b.id] ?? 0) - (totals[a.id] ?? 0));
 
   if (rows.length === 0 && unaccounted === MINUTES_IN_DAY) {
     return <p className="text-sm text-muted-foreground">Nothing logged yet today.</p>;
@@ -31,7 +31,7 @@ export function CategoryBreakdown({ entries }: { entries: TimeEntry[] }) {
       {unaccounted > 0 && (
         <div className="flex items-center gap-3 border-t border-line pt-3">
           {(() => {
-            const Icon = getCategory("other").icon;
+            const Icon = getCategory("other", categories).icon;
             return <Icon className="size-4 shrink-0 text-muted-foreground" />;
           })()}
           <span className="w-32 shrink-0 truncate text-sm text-muted-foreground">Unaccounted</span>

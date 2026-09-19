@@ -8,6 +8,9 @@ import { EntryForm } from "@/components/timelog/EntryForm";
 import { EntryList } from "@/components/timelog/EntryList";
 import { StreakBoard } from "@/components/timelog/StreakBoard";
 import { useDayNav } from "@/hooks/useDayNav";
+import { usePractices } from "@/hooks/usePractices";
+import { CATEGORIES } from "@/lib/categories";
+import { practiceToCategory } from "@/lib/practices";
 import { useCollection } from "@/lib/store";
 import { formatDuration, unaccountedMinutes } from "@/lib/timeMath";
 import type { TimeEntry } from "@/lib/types";
@@ -15,8 +18,10 @@ import type { TimeEntry } from "@/lib/types";
 export function Dashboard() {
   const { viewDate, isToday, label, goPrev, goNext, goToday } = useDayNav();
   const { items: allEntries, setItems: setAllEntries, loading } = useCollection<TimeEntry>("time_entries");
+  const { practices, addPractice, removePractice } = usePractices();
   const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
 
+  const allCategories = useMemo(() => [...CATEGORIES, ...practices.map(practiceToCategory)], [practices]);
   const dayEntries = useMemo(() => allEntries.filter((e) => e.date === viewDate), [allEntries, viewDate]);
   const unaccounted = unaccountedMinutes(dayEntries);
 
@@ -42,7 +47,7 @@ export function Dashboard() {
           <p className="text-sm text-muted-foreground">Loading…</p>
         ) : (
           <>
-            <DayTimeline entries={dayEntries} />
+            <DayTimeline entries={dayEntries} categories={allCategories} />
             <p className="mt-3 text-sm text-muted-foreground">
               {unaccounted > 0 ? (
                 <>
@@ -63,7 +68,7 @@ export function Dashboard() {
           <p className="text-sm text-muted-foreground">Last 21 days, and this week&rsquo;s count &mdash; built from the log, no separate check-in needed.</p>
         </CardHeader>
         <CardContent className="p-0 pt-4">
-          <StreakBoard entries={allEntries} />
+          <StreakBoard entries={allEntries} practices={practices} onAddPractice={addPractice} onRemovePractice={removePractice} />
         </CardContent>
       </Card>
 
@@ -72,7 +77,14 @@ export function Dashboard() {
           <CardTitle className="font-display text-lg font-semibold">{editingEntry ? "Edit entry" : "Log a block of time"}</CardTitle>
         </CardHeader>
         <CardContent className="p-0 pt-4">
-          <EntryForm date={viewDate} existingEntries={dayEntries} editingEntry={editingEntry} onSave={saveEntry} onCancelEdit={() => setEditingEntry(null)} />
+          <EntryForm
+            date={viewDate}
+            existingEntries={dayEntries}
+            editingEntry={editingEntry}
+            categories={allCategories}
+            onSave={saveEntry}
+            onCancelEdit={() => setEditingEntry(null)}
+          />
         </CardContent>
       </Card>
 
@@ -82,7 +94,7 @@ export function Dashboard() {
             <CardTitle className="font-display text-lg font-semibold">Entries</CardTitle>
           </CardHeader>
           <CardContent className="p-0 pt-4">
-            <EntryList entries={dayEntries} onEdit={setEditingEntry} onDelete={deleteEntry} />
+            <EntryList entries={dayEntries} categories={allCategories} onEdit={setEditingEntry} onDelete={deleteEntry} />
           </CardContent>
         </Card>
 
@@ -91,7 +103,7 @@ export function Dashboard() {
             <CardTitle className="font-display text-lg font-semibold">Where the time went</CardTitle>
           </CardHeader>
           <CardContent className="p-0 pt-4">
-            <CategoryBreakdown entries={dayEntries} />
+            <CategoryBreakdown entries={dayEntries} categories={allCategories} />
           </CardContent>
         </Card>
       </div>

@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CATEGORIES } from "@/lib/categories";
+import type { Category } from "@/lib/categories";
 import { makeId } from "@/lib/store";
 import { findOverlap, minutesToTimeString, timeStringToMinutes } from "@/lib/timeMath";
 import type { TimeEntry } from "@/lib/types";
@@ -13,18 +13,20 @@ export function EntryForm({
   date,
   existingEntries,
   editingEntry,
+  categories,
   onSave,
   onCancelEdit,
 }: {
   date: string;
   existingEntries: TimeEntry[];
   editingEntry: TimeEntry | null;
+  categories: Category[];
   onSave: (entry: TimeEntry) => void;
   onCancelEdit: () => void;
 }) {
   const [start, setStart] = useState("09:00");
   const [end, setEnd] = useState("10:00");
-  const [categoryId, setCategoryId] = useState(CATEGORIES[0].id);
+  const [categoryId, setCategoryId] = useState(categories[0].id);
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
 
@@ -41,7 +43,7 @@ export function EntryForm({
   function reset() {
     setStart("09:00");
     setEnd("10:00");
-    setCategoryId(CATEGORIES[0].id);
+    setCategoryId(categories[0].id);
     setNote("");
     setError("");
   }
@@ -88,7 +90,7 @@ export function EntryForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {CATEGORIES.map((category) => (
+              {categories.map((category) => (
                 <SelectItem key={category.id} value={category.id}>
                   {category.label}
                 </SelectItem>
