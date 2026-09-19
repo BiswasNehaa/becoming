@@ -2,6 +2,7 @@ import { Moon, Sun } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import { HEADER_SLOT_ID } from "@/components/HeaderSlot";
 import { navItems } from "@/lib/nav";
 import { useTheme } from "@/lib/theme";
 
@@ -19,7 +20,8 @@ export function Header() {
         <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">{isDashboard ? "Today" : "Your space"}</p>
         <h1 className="mt-1 truncate font-display text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
       </div>
-      <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+      <div className="flex shrink-0 flex-wrap items-center gap-2 sm:gap-3">
+        <div id={HEADER_SLOT_ID} className="flex flex-wrap items-center gap-2 sm:gap-3" />
         <Button
           variant="ghost"
           size="icon"

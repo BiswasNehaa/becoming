@@ -3,6 +3,7 @@ import { Flame, Target, Trophy } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DayNavHeader } from "@/components/DayNavHeader";
+import { HeaderSlot } from "@/components/HeaderSlot";
 import { ProgressRing } from "@/components/ProgressRing";
 import { InsightBanner } from "@/components/dashboard/InsightBanner";
 import { LearningSnapshot } from "@/components/dashboard/LearningSnapshot";
@@ -72,15 +73,15 @@ export function Dashboard() {
 
   return (
     <div className="subtle-rise space-y-5">
-      <div className="flex flex-wrap items-center justify-end gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/60 px-3 py-1 text-xs font-medium">
-          <Flame className="size-3.5 text-amber" /> {overallStreak.current}-day <span className="text-muted-foreground">consistency</span>
+      <HeaderSlot>
+        <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-accent/60 px-3 py-2 text-sm font-medium">
+          <Flame className="size-4 text-amber" /> {overallStreak.current}-day <span className="hidden text-muted-foreground sm:inline">consistency</span>
         </span>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/60 px-3 py-1 text-xs font-medium">
-          <Trophy className="size-3.5 text-violet" /> {overallStreak.best}-day <span className="text-muted-foreground">best</span>
+        <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-accent/60 px-3 py-2 text-sm font-medium">
+          <Trophy className="size-4 text-violet" /> {overallStreak.best}-day <span className="hidden text-muted-foreground md:inline">best</span>
         </span>
         <QuickAddDialog practices={practices} onQuickAdd={quickAdd} />
-      </div>
+      </HeaderSlot>
 
       <div className="grid gap-5 lg:grid-cols-3">
         <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none lg:col-span-1">
