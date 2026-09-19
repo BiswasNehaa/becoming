@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 
-const THEME_KEY = "ascend:theme";
+const THEME_KEY = "becoming:theme";
 
+// Defaults to light rather than following the OS/browser's dark-mode
+// preference — the app is meant to read as bright and hopeful first,
+// not dark. Once someone actually toggles it, that choice sticks.
 function getInitialTheme(): "light" | "dark" {
   const stored = localStorage.getItem(THEME_KEY);
-  if (stored === "light" || stored === "dark") return stored;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return stored === "dark" ? "dark" : "light";
 }
 
 export function useTheme() {

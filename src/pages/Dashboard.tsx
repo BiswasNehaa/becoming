@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DayNavHeader } from "@/components/DayNavHeader";
+import { ProgressRing } from "@/components/ProgressRing";
 import { LearningSnapshot } from "@/components/dashboard/LearningSnapshot";
 import { NutritionSnapshot } from "@/components/dashboard/NutritionSnapshot";
 import { ReadingSnapshot } from "@/components/dashboard/ReadingSnapshot";
@@ -29,6 +30,9 @@ export function Dashboard() {
   const dayEntries = useMemo(() => allEntries.filter((e) => e.date === viewDate), [allEntries, viewDate]);
   const unaccounted = unaccountedMinutes(dayEntries);
 
+  const practicesDoneToday = practices.filter((p) => dayEntries.some((e) => e.categoryId === p.id)).length;
+  const progressPct = practices.length > 0 ? Math.round((practicesDoneToday / practices.length) * 100) : 0;
+
   function saveEntry(entry: TimeEntry) {
     setAllEntries((prev) => {
       const exists = prev.some((e) => e.id === entry.id);
@@ -44,27 +48,44 @@ export function Dashboard() {
 
   return (
     <div className="subtle-rise space-y-5">
-      <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
-        <DayNavHeader label={label} isToday={isToday} onPrev={goPrev} onNext={goNext} onToday={goToday} />
+      <div className="grid gap-5 lg:grid-cols-3">
+        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none lg:col-span-1">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">{isToday ? "Today's progress" : "Progress"}</p>
+          <div className="mt-4 flex items-center gap-5">
+            <ProgressRing percent={progressPct} size={104} thickness={11} color="var(--glow)">
+              <span className="font-display text-2xl font-bold">{progressPct}%</span>
+            </ProgressRing>
+            <div className="min-w-0">
+              <p className="font-display text-lg font-semibold">
+                {practicesDoneToday} of {practices.length}
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">practices logged {isToday ? "today" : "that day"}</p>
+            </div>
+          </div>
+        </Card>
 
-        {loading ? (
-          <p className="text-sm text-muted-foreground">Loading…</p>
-        ) : (
-          <>
-            <DayTimeline entries={dayEntries} categories={allCategories} />
-            <p className="mt-3 text-sm text-muted-foreground">
-              {unaccounted > 0 ? (
-                <>
-                  <span className="font-medium text-foreground">{formatDuration(unaccounted)}</span> unaccounted so far
-                  {isToday ? " today" : ""}.
-                </>
-              ) : (
-                "The whole day is accounted for."
-              )}
-            </p>
-          </>
-        )}
-      </Card>
+        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8 lg:col-span-2">
+          <DayNavHeader label={label} isToday={isToday} onPrev={goPrev} onNext={goNext} onToday={goToday} />
+
+          {loading ? (
+            <p className="text-sm text-muted-foreground">Loading…</p>
+          ) : (
+            <>
+              <DayTimeline entries={dayEntries} categories={allCategories} />
+              <p className="mt-3 text-sm text-muted-foreground">
+                {unaccounted > 0 ? (
+                  <>
+                    <span className="font-medium text-foreground">{formatDuration(unaccounted)}</span> unaccounted so far
+                    {isToday ? " today" : ""}.
+                  </>
+                ) : (
+                  "The whole day is accounted for."
+                )}
+              </p>
+            </>
+          )}
+        </Card>
+      </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <NutritionSnapshot />
