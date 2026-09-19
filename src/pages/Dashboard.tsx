@@ -117,43 +117,45 @@ export function Dashboard() {
         </div>
       </div>
 
-      <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
-        <DayNavHeader label={label} isToday={isToday} onPrev={goPrev} onNext={goNext} onToday={goToday} />
+      <div className="grid gap-5 lg:grid-cols-2">
+        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+          <DayNavHeader label={label} isToday={isToday} onPrev={goPrev} onNext={goNext} onToday={goToday} />
 
-        {loading ? (
-          <p className="text-sm text-muted-foreground">Loading…</p>
-        ) : (
-          <>
-            <DayTimeline entries={dayEntries} categories={allCategories} />
-            <p className="mt-3 text-sm text-muted-foreground">
-              {unaccounted > 0 ? (
-                <>
-                  <span className="font-medium text-foreground">{formatDuration(unaccounted)}</span> unaccounted so far
-                  {isToday ? " today" : ""}.
-                </>
-              ) : (
-                "The whole day is accounted for."
-              )}
-            </p>
-          </>
-        )}
-      </Card>
+          {loading ? (
+            <p className="text-sm text-muted-foreground">Loading…</p>
+          ) : (
+            <>
+              <DayTimeline entries={dayEntries} categories={allCategories} />
+              <p className="mt-3 text-sm text-muted-foreground">
+                {unaccounted > 0 ? (
+                  <>
+                    <span className="font-medium text-foreground">{formatDuration(unaccounted)}</span> unaccounted so far
+                    {isToday ? " today" : ""}.
+                  </>
+                ) : (
+                  "The whole day is accounted for."
+                )}
+              </p>
+            </>
+          )}
+        </Card>
 
-      <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
-        <CardHeader className="p-0">
-          <CardTitle className="font-display text-lg font-semibold">{editingEntry ? "Edit entry" : "Log a block of time"}</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0 pt-4">
-          <EntryForm
-            date={viewDate}
-            existingEntries={dayEntries}
-            editingEntry={editingEntry}
-            categories={allCategories}
-            onSave={saveEntry}
-            onCancelEdit={() => setEditingEntry(null)}
-          />
-        </CardContent>
-      </Card>
+        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+          <CardHeader className="p-0">
+            <CardTitle className="font-display text-lg font-semibold">{editingEntry ? "Edit entry" : "Log a block of time"}</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0 pt-4">
+            <EntryForm
+              date={viewDate}
+              existingEntries={dayEntries}
+              editingEntry={editingEntry}
+              categories={allCategories}
+              onSave={saveEntry}
+              onCancelEdit={() => setEditingEntry(null)}
+            />
+          </CardContent>
+        </Card>
+      </div>
 
       <div className="grid gap-5 lg:grid-cols-2">
         <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
