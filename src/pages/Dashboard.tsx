@@ -83,15 +83,15 @@ export function Dashboard() {
         <QuickAddDialog practices={practices} onQuickAdd={quickAdd} />
       </HeaderSlot>
 
-      <div className="grid gap-5 lg:grid-cols-3">
-        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none lg:col-span-1">
+      <div className="grid gap-5 lg:grid-cols-5">
+        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none lg:col-span-2">
           <div className="flex items-center justify-between">
             <p className="text-xs uppercase tracking-widest text-muted-foreground">Daily progress</p>
             <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${status.tone}`}>{status.label}</span>
           </div>
-          <div className="mt-4 flex items-center gap-5">
-            <ProgressRing percent={progressPct} size={104} thickness={11} color="var(--glow)">
-              <span className="font-display text-2xl font-bold">{progressPct}%</span>
+          <div className="mt-4 flex items-center gap-4">
+            <ProgressRing percent={progressPct} size={132} thickness={14} color="var(--glow)">
+              <span className="font-display text-3xl font-bold">{progressPct}%</span>
             </ProgressRing>
             <div className="min-w-0">
               <p className="font-display text-lg font-semibold">
@@ -112,7 +112,7 @@ export function Dashboard() {
           </div>
         </Card>
 
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-3">
           <InsightBanner practices={practices} entries={allEntries} />
         </div>
       </div>
