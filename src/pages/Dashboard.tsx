@@ -7,6 +7,7 @@ import { LearningSnapshot } from "@/components/dashboard/LearningSnapshot";
 import { NutritionSnapshot } from "@/components/dashboard/NutritionSnapshot";
 import { ReadingSnapshot } from "@/components/dashboard/ReadingSnapshot";
 import { ReflectionSnapshot } from "@/components/dashboard/ReflectionSnapshot";
+import { TodoList } from "@/components/dashboard/TodoList";
 import { CategoryBreakdown } from "@/components/timelog/CategoryBreakdown";
 import { DayTimeline } from "@/components/timelog/DayTimeline";
 import { EntryForm } from "@/components/timelog/EntryForm";
@@ -86,6 +87,15 @@ export function Dashboard() {
           )}
         </Card>
       </div>
+
+      <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+        <CardHeader className="p-0">
+          <CardTitle className="font-display text-lg font-semibold">To-do</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0 pt-4">
+          <TodoList />
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <NutritionSnapshot />
