@@ -13,9 +13,9 @@ export function Sidebar() {
   return (
     <aside className="glass-panel sticky top-0 hidden h-screen w-64 shrink-0 flex-col gap-1 rounded-r-3xl p-5 lg:flex">
       <div className="mb-5 flex items-center gap-3 px-2 py-3">
-        <div className="rainbow-bar grid size-9 place-items-center rounded-xl font-display text-sm font-bold text-glow-foreground shadow-lg">D</div>
+        <div className="rainbow-bar grid size-9 place-items-center rounded-xl font-display text-sm font-bold text-glow-foreground shadow-lg">B</div>
         <div>
-          <p className="font-display font-semibold leading-none">Daybook</p>
+          <p className="font-display font-semibold leading-none">Becoming</p>
           <p className="mt-1 text-[11px] text-muted-foreground">Personal growth, logged daily</p>
         </div>
       </div>

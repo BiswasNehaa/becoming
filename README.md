@@ -1,4 +1,4 @@
-# Daybook — Personal Growth Tracker
+# Becoming — Personal Growth Tracker
 
 A private habit, learning, reading, and nutrition tracker, built in phases. The design language and shadcn/ui primitives are borrowed from [life-weave-insight](https://github.com/BiswasNehaa/life-weave-insight) for reference, but rebuilt from scratch on a simpler stack with real, working data underneath.
 

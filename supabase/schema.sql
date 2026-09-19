@@ -1,4 +1,4 @@
--- Daybook schema.
+-- Becoming schema.
 --
 -- One generic table instead of one table per feature: it mirrors the app's
 -- existing collection model exactly (time_entries, food_entries,

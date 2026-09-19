@@ -5,7 +5,7 @@ import cors from "cors";
 import express from "express";
 
 /**
- * A tiny local data API for Daybook.
+ * A tiny local data API for Becoming.
  *
  * Every module (habits, reading, learning, nutrition, reflections...)
  * stores its records as a JSON array in data/<collection>.json. The React
@@ -67,5 +67,5 @@ app.put("/api/collections/:name", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`[daybook-api] listening on http://localhost:${PORT} — data dir: ${DATA_DIR}`);
+  console.log(`[becoming-api] listening on http://localhost:${PORT} — data dir: ${DATA_DIR}`);
 });

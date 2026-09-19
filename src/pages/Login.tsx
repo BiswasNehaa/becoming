@@ -34,9 +34,9 @@ export function Login() {
     <div className="ambient-field flex min-h-screen items-center justify-center bg-paper p-6 text-foreground">
       <div className="glass-panel w-full max-w-sm rounded-3xl p-8">
         <div className="mb-6 flex items-center gap-3">
-          <div className="rainbow-bar grid size-9 place-items-center rounded-xl font-display text-sm font-bold text-glow-foreground shadow-lg">D</div>
+          <div className="rainbow-bar grid size-9 place-items-center rounded-xl font-display text-sm font-bold text-glow-foreground shadow-lg">B</div>
           <div>
-            <p className="font-display font-semibold leading-none">Daybook</p>
+            <p className="font-display font-semibold leading-none">Becoming</p>
             <p className="mt-1 text-[11px] text-muted-foreground">Personal growth, logged daily</p>
           </div>
         </div>

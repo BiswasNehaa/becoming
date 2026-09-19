@@ -11,7 +11,7 @@ export function Header() {
   const isDashboard = location.pathname === "/";
   const title = isDashboard
     ? new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })
-    : (navItems.find((item) => item.to === location.pathname)?.label ?? "Daybook");
+    : (navItems.find((item) => item.to === location.pathname)?.label ?? "Becoming");
 
   return (
     <header className="subtle-rise mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4 border-b border-line pb-6 sm:flex sm:flex-wrap sm:justify-between">
