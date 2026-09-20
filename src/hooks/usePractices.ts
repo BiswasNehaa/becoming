@@ -12,16 +12,20 @@ export function usePractices() {
 
   function addPractice(label: string, icon: PracticeIconKey, targetMinutes?: number): Practice {
     const next: Practice = { id: makeId(), label, icon, color: paletteColor(practices.length), targetMinutes };
-    setItems([...practices, next]);
+    // Functional update: addPractice + updatePractice sometimes get called
+    // back-to-back in the same event handler (e.g. create-and-focus in one
+    // go) — computing the next array from the stale `practices` closure
+    // would let the second call silently clobber the first.
+    setItems((prev) => [...prev, next]);
     return next;
   }
 
   function removePractice(id: string) {
-    setItems(practices.filter((p) => p.id !== id));
+    setItems((prev) => prev.filter((p) => p.id !== id));
   }
 
   function updatePractice(id: string, changes: Partial<Omit<Practice, "id">>) {
-    setItems(practices.map((p) => (p.id === id ? { ...p, ...changes } : p)));
+    setItems((prev) => prev.map((p) => (p.id === id ? { ...p, ...changes } : p)));
   }
 
   return { practices, addPractice, removePractice, updatePractice, loading };

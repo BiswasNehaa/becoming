@@ -199,6 +199,10 @@ export function Dashboard() {
               dayEntries={dayEntries}
               onSetFocus={(id, targetMinutes) => updatePractice(id, { isFocus: true, targetMinutes })}
               onUnsetFocus={(id) => updatePractice(id, { isFocus: false })}
+              onCreateFocus={(label, targetMinutes) => {
+                const created = addPractice(label, "sparkles", targetMinutes);
+                updatePractice(created.id, { isFocus: true });
+              }}
             />
           </CardContent>
         </Card>
