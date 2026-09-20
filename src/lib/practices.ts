@@ -62,14 +62,16 @@ export function paletteColor(index: number): string {
 
 /** A person's own list of deliberate practices worth a streak on — not
  * every hobby fits guitar/chess/crochet, so this is fully user-managed
- * rather than a fixed list. `targetMinutes` is optional: without it, a
- * practice just tracks "did it happen"; with it, Today's focus can show
- * real progress against a goal instead of a plain yes/no. */
+ * rather than a fixed list. `isFocus` marks it as one of today's one-or-two
+ * highlighted priorities (separate from just being a streak worth logging);
+ * `targetMinutes` is the time goal for that focus, shown as progress
+ * instead of a plain yes/no. */
 export type Practice = {
   id: string;
   label: string;
   icon: PracticeIconKey;
   color: string;
+  isFocus?: boolean;
   targetMinutes?: number;
 };
 

@@ -38,7 +38,7 @@ function progressStatus(pct: number): { label: string; tone: string } {
 export function Dashboard() {
   const { viewDate, isToday, label, goPrev, goNext, goToday } = useDayNav();
   const { items: allEntries, setItems: setAllEntries, loading } = useCollection<TimeEntry>("time_entries");
-  const { practices, addPractice, removePractice } = usePractices();
+  const { practices, addPractice, removePractice, updatePractice } = usePractices();
   const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
 
   const allCategories = useMemo(() => [...CATEGORIES, ...practices.map(practiceToCategory)], [practices]);
@@ -47,7 +47,8 @@ export function Dashboard() {
 
   const practicesDoneToday = practices.filter((p) => dayEntries.some((e) => e.categoryId === p.id)).length;
   const progressPct = practices.length > 0 ? Math.round((practicesDoneToday / practices.length) * 100) : 0;
-  const focusDoneToday = practices.filter((p) => {
+  const focusPractices = useMemo(() => practices.filter((p) => p.isFocus), [practices]);
+  const focusDoneToday = focusPractices.filter((p) => {
     const minutes = dayEntries.filter((e) => e.categoryId === p.id).reduce((sum, e) => sum + Math.max(0, e.endMin - e.startMin), 0);
     return focusStatus(minutes, p.targetMinutes).label === "complete" || (!p.targetMinutes && minutes > 0);
   }).length;
@@ -186,12 +187,19 @@ export function Dashboard() {
         <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
           <CardHeader className="flex-row items-center justify-between p-0 pb-4 space-y-0">
             <CardTitle className="font-display text-lg font-semibold">Today&rsquo;s focus</CardTitle>
-            <span className="text-xs text-muted-foreground">
-              Scheduled {practices.length} &middot; Done {focusDoneToday}
-            </span>
+            {focusPractices.length > 0 && (
+              <span className="text-xs text-muted-foreground">
+                Scheduled {focusPractices.length} &middot; Done {focusDoneToday}
+              </span>
+            )}
           </CardHeader>
           <CardContent className="p-0">
-            <TodayFocusList practices={practices} dayEntries={dayEntries} />
+            <TodayFocusList
+              practices={practices}
+              dayEntries={dayEntries}
+              onSetFocus={(id, targetMinutes) => updatePractice(id, { isFocus: true, targetMinutes })}
+              onUnsetFocus={(id) => updatePractice(id, { isFocus: false })}
+            />
           </CardContent>
         </Card>
 

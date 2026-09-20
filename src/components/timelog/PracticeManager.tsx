@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, X } from "lucide-react";
+import { Plus, Star, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,22 +12,19 @@ export function PracticeManager({
   onRemove,
 }: {
   practices: Practice[];
-  onAdd: (label: string, icon: PracticeIconKey, targetMinutes?: number) => void;
+  onAdd: (label: string, icon: PracticeIconKey) => void;
   onRemove: (id: string) => void;
 }) {
   const [adding, setAdding] = useState(false);
   const [label, setLabel] = useState("");
   const [icon, setIcon] = useState<PracticeIconKey>("sparkles");
-  const [target, setTarget] = useState("");
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!label.trim()) return;
-    const targetMinutes = target.trim() ? Number(target) : undefined;
-    onAdd(label.trim(), icon, targetMinutes);
+    onAdd(label.trim(), icon);
     setLabel("");
     setIcon("sparkles");
-    setTarget("");
     setAdding(false);
   }
 
@@ -39,6 +36,7 @@ export function PracticeManager({
           <span key={p.id} className="inline-flex items-center gap-1.5 rounded-full bg-accent/60 py-1 pl-2.5 pr-1.5 text-xs">
             <Icon className="size-3.5" style={{ color: p.color }} />
             {p.label}
+            {p.isFocus ? <Star className="size-3 fill-current text-amber" aria-label="Today's focus" /> : null}
             {p.targetMinutes ? <span className="text-muted-foreground">· {p.targetMinutes}m</span> : null}
             <button
               type="button"
@@ -60,15 +58,6 @@ export function PracticeManager({
             onChange={(e) => setLabel(e.target.value)}
             placeholder="e.g. Running"
             className="h-6 w-28 border-0 bg-transparent px-0 text-xs shadow-none focus-visible:ring-0"
-          />
-          <Input
-            type="number"
-            min="0"
-            inputMode="numeric"
-            value={target}
-            onChange={(e) => setTarget(e.target.value)}
-            placeholder="min/day"
-            className="h-6 w-16 border-0 bg-transparent px-0 text-xs shadow-none focus-visible:ring-0"
           />
           <div className="flex gap-0.5">
             {PRACTICE_ICON_KEYS.map((key) => {

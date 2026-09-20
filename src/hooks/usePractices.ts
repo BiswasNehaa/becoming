@@ -20,5 +20,9 @@ export function usePractices() {
     setItems(practices.filter((p) => p.id !== id));
   }
 
-  return { practices, addPractice, removePractice, loading };
+  function updatePractice(id: string, changes: Partial<Omit<Practice, "id">>) {
+    setItems(practices.map((p) => (p.id === id ? { ...p, ...changes } : p)));
+  }
+
+  return { practices, addPractice, removePractice, updatePractice, loading };
 }
