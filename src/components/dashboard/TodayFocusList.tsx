@@ -9,8 +9,6 @@ import { formatDuration } from "@/lib/timeMath";
 import type { TimeEntry } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const MAX_FOCUS = 2;
-
 export function focusStatus(minutes: number, targetMinutes?: number): { label: string; tone: string } {
   if (!targetMinutes) {
     return minutes > 0 ? { label: "logged", tone: "text-[var(--sage)]" } : { label: "not started", tone: "text-muted-foreground" };
@@ -66,9 +64,9 @@ export function TodayFocusList({
 
   return (
     <div className="grid gap-2">
-      {practices.length === 0 && <p className="text-sm text-muted-foreground">Add a streak below, then pick one or two as today&rsquo;s focus.</p>}
+      {practices.length === 0 && <p className="text-sm text-muted-foreground">Add a streak below, then pick what today&rsquo;s focus is.</p>}
       {practices.length > 0 && focusItems.length === 0 && !adding && (
-        <p className="text-sm text-muted-foreground">Pick one or two things to focus on today — the rest can stay plain streaks.</p>
+        <p className="text-sm text-muted-foreground">Pick what to focus on today — the rest can stay plain streaks.</p>
       )}
 
       {focusItems.map((p) => {
@@ -133,7 +131,7 @@ export function TodayFocusList({
         );
       })}
 
-      {focusItems.length < MAX_FOCUS && candidates.length > 0 && (
+      {candidates.length > 0 && (
         adding ? (
           <form onSubmit={submitAdd} className="flex flex-wrap items-center gap-2 rounded-2xl bg-accent/25 px-4 py-3">
             <Select value={pickId} onValueChange={setPickId}>
