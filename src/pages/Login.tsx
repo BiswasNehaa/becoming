@@ -18,7 +18,9 @@ export function Login() {
     setStatus(null);
 
     const { error } =
-      mode === "signup" ? await supabase.auth.signUp({ email, password }) : await supabase.auth.signInWithPassword({ email, password });
+      mode === "signup"
+        ? await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin } })
+        : await supabase.auth.signInWithPassword({ email, password });
 
     setSubmitting(false);
     if (error) {
