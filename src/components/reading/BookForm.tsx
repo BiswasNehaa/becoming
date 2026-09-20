@@ -93,12 +93,14 @@ export function BookForm({ editingBook, onSave, onCancelEdit }: { editingBook: B
             </SelectContent>
           </Select>
         </div>
-        <div className="flex flex-col gap-1">
-          <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Rating</label>
-          <div className="flex h-9 items-center">
-            <StarRating value={rating} onChange={setRating} />
+        {status === "completed" && (
+          <div className="flex flex-col gap-1">
+            <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Rating</label>
+            <div className="flex h-9 items-center">
+              <StarRating value={rating} onChange={setRating} />
+            </div>
           </div>
-        </div>
+        )}
         <Button type="submit">{editingBook ? "Save changes" : "Add book"}</Button>
         {editingBook && (
           <Button type="button" variant="ghost" size="icon" aria-label="Cancel edit" onClick={onCancelEdit}>
