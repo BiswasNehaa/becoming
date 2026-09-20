@@ -96,23 +96,23 @@ export function FoodEntryForm({
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-[11px] uppercase tracking-wide text-muted-foreground">kcal</label>
-          <Input type="number" min="0" inputMode="numeric" value={calories} onChange={(e) => setCalories(e.target.value)} className="w-20" />
+          <Input type="number" min="0" step="any" inputMode="decimal" value={calories} onChange={(e) => setCalories(e.target.value)} className="w-20" />
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Protein g</label>
-          <Input type="number" min="0" inputMode="numeric" value={proteinG} onChange={(e) => setProteinG(e.target.value)} className="w-20" />
+          <Input type="number" min="0" step="any" inputMode="decimal" value={proteinG} onChange={(e) => setProteinG(e.target.value)} className="w-20" />
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Carbs g</label>
-          <Input type="number" min="0" inputMode="numeric" value={carbsG} onChange={(e) => setCarbsG(e.target.value)} className="w-20" />
+          <Input type="number" min="0" step="any" inputMode="decimal" value={carbsG} onChange={(e) => setCarbsG(e.target.value)} className="w-20" />
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Fat g</label>
-          <Input type="number" min="0" inputMode="numeric" value={fatG} onChange={(e) => setFatG(e.target.value)} className="w-20" />
+          <Input type="number" min="0" step="any" inputMode="decimal" value={fatG} onChange={(e) => setFatG(e.target.value)} className="w-20" />
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Fiber g</label>
-          <Input type="number" min="0" inputMode="numeric" value={fiberG} onChange={(e) => setFiberG(e.target.value)} className="w-20" />
+          <Input type="number" min="0" step="any" inputMode="decimal" value={fiberG} onChange={(e) => setFiberG(e.target.value)} className="w-20" />
         </div>
         <Button type="submit">{editingEntry ? "Save changes" : "Add food"}</Button>
         {editingEntry && (

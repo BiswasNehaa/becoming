@@ -40,7 +40,8 @@ export function TargetsEditor({ targets, onSave }: { targets: NutritionTargets; 
           <Input
             type="number"
             min="0"
-            inputMode="numeric"
+            step="any"
+            inputMode="decimal"
             value={draft[key]}
             onChange={(e) => setDraft((d) => ({ ...d, [key]: Number(e.target.value) || 0 }))}
             className="w-20"
