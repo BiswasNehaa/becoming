@@ -156,6 +156,7 @@ export function Dashboard() {
               categories={allCategories}
               onSave={saveEntry}
               onCancelEdit={() => setEditingEntry(null)}
+              onAddCategory={(label) => practiceToCategory(addPractice(label, "sparkles"))}
             />
           </CardContent>
         </Card>
