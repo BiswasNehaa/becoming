@@ -6,8 +6,17 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Category } from "@/lib/categories";
 import { makeId } from "@/lib/store";
-import { findOverlap, minutesToTimeString, timeStringToMinutes } from "@/lib/timeMath";
+import { findOverlap, minutesToTimeString, MINUTES_IN_DAY, timeStringToMinutes } from "@/lib/timeMath";
 import type { TimeEntry } from "@/lib/types";
+
+/** Where the next entry should start by default: right after whatever
+ * currently ends latest today, so logging stays a continuous line
+ * instead of retyping 9–10 every time. Falls back to 9am on an empty day. */
+function nextStartMinutes(entries: TimeEntry[]): number {
+  if (entries.length === 0) return 9 * 60;
+  const latestEnd = Math.max(...entries.map((e) => e.endMin));
+  return Math.min(latestEnd, MINUTES_IN_DAY - 1);
+}
 
 export function EntryForm({
   date,
@@ -40,13 +49,23 @@ export function EntryForm({
     }
   }, [editingEntry]);
 
+  // Keeps the form's default range following the day's latest entry —
+  // re-runs whenever existingEntries changes (a new entry was added, or
+  // you navigated to a different day) as long as you're not mid-edit.
+  useEffect(() => {
+    if (editingEntry) return;
+    const startMin = nextStartMinutes(existingEntries);
+    setStart(minutesToTimeString(startMin));
+    setEnd(minutesToTimeString(Math.min(startMin + 60, MINUTES_IN_DAY - 1)));
+  }, [existingEntries, editingEntry]);
+
   function reset() {
-    setStart("09:00");
-    setEnd("10:00");
     setCategoryId(categories[0].id);
     setNote("");
     setError("");
   }
+
+  const isOther = categoryId === "other";
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -54,6 +73,10 @@ export function EntryForm({
     const endMin = timeStringToMinutes(end);
     if (endMin <= startMin) {
       setError("End time has to be after the start time.");
+      return;
+    }
+    if (isOther && !note.trim()) {
+      setError("Say what it was — \"Other\" needs a note.");
       return;
     }
     const overlap = findOverlap(existingEntries, startMin, endMin, editingEntry?.id);
@@ -99,8 +122,13 @@ export function EntryForm({
           </Select>
         </div>
         <div className="flex min-w-40 flex-1 flex-col gap-1">
-          <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Note (optional)</label>
-          <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder="what were you doing?" />
+          <label className="text-[11px] uppercase tracking-wide text-muted-foreground">{isOther ? "What is it?" : "Note (optional)"}</label>
+          <Input
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder={isOther ? "e.g. dentist appointment" : "what were you doing?"}
+            className={isOther ? "border-primary" : undefined}
+          />
         </div>
         <Button type="submit">{editingEntry ? "Save changes" : "Add entry"}</Button>
         {editingEntry && (
