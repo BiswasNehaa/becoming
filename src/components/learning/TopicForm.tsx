@@ -5,23 +5,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { makeId } from "@/lib/store";
-import { TOPIC_GROUPS, TOPIC_STATUSES, type LearningTopic, type TopicGroup, type TopicStatus } from "@/lib/learning";
+import { TOPIC_STATUSES, type LearningTopic, type TopicStatus } from "@/lib/learning";
 
 const numberField = (v: string) => (v.trim() === "" ? 0 : Number(v));
+const GROUP_DATALIST_ID = "learning-group-suggestions";
 
 export function TopicForm({
   editingTopic,
+  existingGroups,
   onSave,
   onCancelEdit,
 }: {
   editingTopic: LearningTopic | null;
+  existingGroups: string[];
   onSave: (topic: LearningTopic) => void;
   onCancelEdit: () => void;
 }) {
-  const [group, setGroup] = useState<TopicGroup>("Foundations");
+  const [group, setGroup] = useState("");
   const [name, setName] = useState("");
   const [status, setStatus] = useState<TopicStatus>("not-started");
-  const [progressPct, setProgressPct] = useState("0");
+  const [targetHours, setTargetHours] = useState("");
   const [hoursSpent, setHoursSpent] = useState("0");
   const [resources, setResources] = useState("");
   const [error, setError] = useState("");
@@ -31,7 +34,7 @@ export function TopicForm({
       setGroup(editingTopic.group);
       setName(editingTopic.name);
       setStatus(editingTopic.status);
-      setProgressPct(String(editingTopic.progressPct));
+      setTargetHours(editingTopic.targetHours ? String(editingTopic.targetHours) : "");
       setHoursSpent(String(editingTopic.hoursSpent));
       setResources(editingTopic.resources ?? "");
       setError("");
@@ -41,7 +44,7 @@ export function TopicForm({
   function reset() {
     setName("");
     setStatus("not-started");
-    setProgressPct("0");
+    setTargetHours("");
     setHoursSpent("0");
     setResources("");
     setError("");
@@ -49,17 +52,21 @@ export function TopicForm({
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!group.trim()) {
+      setError("Give the topic a group — your own, whatever you're organizing this under.");
+      return;
+    }
     if (!name.trim()) {
       setError("Give the topic a name.");
       return;
     }
     onSave({
       id: editingTopic?.id ?? makeId(),
-      group,
+      group: group.trim(),
       name: name.trim(),
       status,
-      progressPct: Math.min(100, Math.max(0, numberField(progressPct))),
       hoursSpent: numberField(hoursSpent),
+      targetHours: numberField(targetHours),
       resources: resources.trim() || undefined,
     });
     if (!editingTopic) reset();
@@ -67,21 +74,15 @@ export function TopicForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-2">
+      <datalist id={GROUP_DATALIST_ID}>
+        {existingGroups.map((g) => (
+          <option key={g} value={g} />
+        ))}
+      </datalist>
       <div className="flex flex-wrap items-end gap-2">
         <div className="flex flex-col gap-1">
           <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Group</label>
-          <Select value={group} onValueChange={(v) => setGroup(v as TopicGroup)}>
-            <SelectTrigger className="w-36">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {TOPIC_GROUPS.map((g) => (
-                <SelectItem key={g} value={g}>
-                  {g}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Input list={GROUP_DATALIST_ID} value={group} onChange={(e) => setGroup(e.target.value)} placeholder="e.g. Foundations" className="w-36" />
         </div>
         <div className="flex min-w-40 flex-1 flex-col gap-1">
           <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Topic</label>
@@ -103,12 +104,12 @@ export function TopicForm({
           </Select>
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Progress %</label>
-          <Input type="number" min="0" max="100" inputMode="numeric" value={progressPct} onChange={(e) => setProgressPct(e.target.value)} className="w-20" />
+          <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Hours spent</label>
+          <Input type="number" min="0" step="any" inputMode="decimal" value={hoursSpent} onChange={(e) => setHoursSpent(e.target.value)} className="w-20" />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Hours</label>
-          <Input type="number" min="0" inputMode="numeric" value={hoursSpent} onChange={(e) => setHoursSpent(e.target.value)} className="w-20" />
+          <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Target hrs (optional)</label>
+          <Input type="number" min="0" step="any" inputMode="decimal" value={targetHours} onChange={(e) => setTargetHours(e.target.value)} className="w-24" />
         </div>
         <div className="flex min-w-40 flex-1 flex-col gap-1">
           <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Resources (optional)</label>

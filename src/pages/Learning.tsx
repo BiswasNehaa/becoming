@@ -7,7 +7,7 @@ import { TopicForm } from "@/components/learning/TopicForm";
 import { useCollection, todayId } from "@/lib/store";
 import { computeCategoryStreak } from "@/lib/streaks";
 import { formatDuration } from "@/lib/timeMath";
-import type { LearningTopic } from "@/lib/learning";
+import { uniqueGroups, type LearningTopic } from "@/lib/learning";
 import type { TimeEntry } from "@/lib/types";
 
 export function Learning() {
@@ -61,14 +61,14 @@ export function Learning() {
           <CardTitle className="font-display text-lg font-semibold">{editingTopic ? "Edit topic" : "Add a topic"}</CardTitle>
         </CardHeader>
         <CardContent className="p-0 pt-4">
-          <TopicForm editingTopic={editingTopic} onSave={saveTopic} onCancelEdit={() => setEditingTopic(null)} />
+          <TopicForm editingTopic={editingTopic} existingGroups={uniqueGroups(topics)} onSave={saveTopic} onCancelEdit={() => setEditingTopic(null)} />
         </CardContent>
       </Card>
 
       <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
         <CardHeader className="p-0">
           <CardTitle className="font-display text-lg font-semibold">Roadmap</CardTitle>
-          <p className="text-sm text-muted-foreground">Foundations, AI, and Engineering — organized around steady attention, not a rush.</p>
+          <p className="text-sm text-muted-foreground">Organized however you group it &mdash; your own topics, your own groups.</p>
         </CardHeader>
         <CardContent className="p-0 pt-4">
           {loading ? <p className="text-sm text-muted-foreground">Loading…</p> : <RoadmapBoard topics={topics} onEdit={setEditingTopic} onDelete={deleteTopic} />}
