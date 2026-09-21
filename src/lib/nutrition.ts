@@ -36,6 +36,7 @@ export type NutritionTargets = {
   carbsG: number;
   fatG: number;
   fiberG: number;
+  waterMl: number;
 };
 
 export const DEFAULT_TARGETS: NutritionTargets = {
@@ -45,7 +46,21 @@ export const DEFAULT_TARGETS: NutritionTargets = {
   carbsG: 250,
   fatG: 65,
   fiberG: 25,
+  waterMl: 2500,
 };
+
+/** A single glass/bottle/etc logged toward the day's water total — additive
+ * like food entries, not a single edited value, since water gets topped up
+ * in small amounts through the day. */
+export type WaterEntry = {
+  id: string;
+  date: string;
+  ml: number;
+};
+
+export function totalWaterMl(entries: WaterEntry[]): number {
+  return entries.reduce((sum, e) => sum + e.ml, 0);
+}
 
 export type MacroTotals = {
   calories: number;

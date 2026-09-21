@@ -33,6 +33,7 @@ export function TargetsEditor({ targets, onSave }: { targets: NutritionTargets; 
           ["carbsG", "Carbs g"],
           ["fatG", "Fat g"],
           ["fiberG", "Fiber g"],
+          ["waterMl", "Water ml"],
         ] as const
       ).map(([key, label]) => (
         <div key={key} className="flex flex-col gap-1">
