@@ -5,9 +5,12 @@ import { DayNavHeader } from "@/components/DayNavHeader";
 import { FoodEntryForm } from "@/components/nutrition/FoodEntryForm";
 import { MacroSummary } from "@/components/nutrition/MacroSummary";
 import { MealList } from "@/components/nutrition/MealList";
+import { NutritionWeeklyReviewCard } from "@/components/nutrition/NutritionWeeklyReviewCard";
 import { TargetsEditor } from "@/components/nutrition/TargetsEditor";
 import { WaterTracker } from "@/components/nutrition/WaterTracker";
 import { useDayNav } from "@/hooks/useDayNav";
+import { computeNutritionWeekStats, generateNutritionWeeklyReview } from "@/lib/nutritionReview";
+import { lastDateIds } from "@/lib/streaks";
 import { useCollection } from "@/lib/store";
 import { DEFAULT_TARGETS, totalMacros, type FoodEntry, type NutritionTargets, type WaterEntry } from "@/lib/nutrition";
 
@@ -25,6 +28,14 @@ export function Nutrition() {
   const dayFood = useMemo(() => allFood.filter((e) => e.date === viewDate), [allFood, viewDate]);
   const dayWater = useMemo(() => allWater.filter((e) => e.date === viewDate), [allWater, viewDate]);
   const totals = useMemo(() => totalMacros(dayFood), [dayFood]);
+
+  const weeklyReview = useMemo(() => {
+    const thisWeekDays = lastDateIds(7);
+    const lastWeekDays = lastDateIds(14).slice(0, 7);
+    const thisWeek = computeNutritionWeekStats(allFood, allWater, thisWeekDays, targets);
+    const lastWeek = computeNutritionWeekStats(allFood, allWater, lastWeekDays, targets);
+    return generateNutritionWeeklyReview(thisWeek, lastWeek, targets, thisWeekDays.length);
+  }, [allFood, allWater, targets]);
 
   function saveEntry(entry: FoodEntry) {
     setAllFood((prev) => {
@@ -83,6 +94,16 @@ export function Nutrition() {
         </CardHeader>
         <CardContent className="p-0 pt-4">
           <MealList entries={dayFood} onEdit={setEditingEntry} onDelete={deleteEntry} />
+        </CardContent>
+      </Card>
+
+      <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+        <CardHeader className="p-0">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Weekly review</p>
+          <CardTitle className="mt-1 font-display text-2xl font-semibold">Your week</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0 pt-5">
+          <NutritionWeeklyReviewCard review={weeklyReview} />
         </CardContent>
       </Card>
     </div>
