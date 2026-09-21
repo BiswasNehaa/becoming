@@ -125,40 +125,6 @@ export function Dashboard() {
         </Card>
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-5">
-        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none lg:col-span-2">
-          <div className="flex items-center justify-between">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Daily progress</p>
-            <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${status.tone}`}>{status.label}</span>
-          </div>
-          <div className="mt-4 flex items-center gap-4">
-            <ProgressRing percent={progressPct} size={132} thickness={14} color="var(--glow)">
-              <span className="font-display text-3xl font-bold">{progressPct}%</span>
-            </ProgressRing>
-            <div className="min-w-0">
-              <p className="font-display text-lg font-semibold">
-                {practicesDoneToday} of {practices.length}
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {practices.length === 0
-                  ? "Add a streak to track"
-                  : practicesDoneToday === practices.length
-                    ? `All planned practices logged ${isToday ? "today" : "that day"}.`
-                    : `practices logged ${isToday ? "today" : "that day"}`}
-              </p>
-            </div>
-          </div>
-          <div className="mt-6 flex items-center justify-between border-t border-line pt-4">
-            <span className="text-xs text-muted-foreground">Progress, not perfection</span>
-            <Target className="size-4 text-primary" />
-          </div>
-        </Card>
-
-        <div className="lg:col-span-3">
-          <InsightBanner practices={practices} entries={allEntries} />
-        </div>
-      </div>
-
       <div className="grid gap-5 lg:grid-cols-2">
         <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
           <DayNavHeader label={label} isToday={isToday} onPrev={goPrev} onNext={goNext} onToday={goToday} />
@@ -218,6 +184,40 @@ export function Dashboard() {
             <CategoryBreakdown entries={dayEntries} categories={allCategories} />
           </CardContent>
         </Card>
+      </div>
+
+      <div className="grid gap-5 lg:grid-cols-5">
+        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none lg:col-span-2">
+          <div className="flex items-center justify-between">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">Daily progress</p>
+            <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${status.tone}`}>{status.label}</span>
+          </div>
+          <div className="mt-4 flex items-center gap-4">
+            <ProgressRing percent={progressPct} size={132} thickness={14} color="var(--glow)">
+              <span className="font-display text-3xl font-bold">{progressPct}%</span>
+            </ProgressRing>
+            <div className="min-w-0">
+              <p className="font-display text-lg font-semibold">
+                {practicesDoneToday} of {practices.length}
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {practices.length === 0
+                  ? "Add a streak to track"
+                  : practicesDoneToday === practices.length
+                    ? `All planned practices logged ${isToday ? "today" : "that day"}.`
+                    : `practices logged ${isToday ? "today" : "that day"}`}
+              </p>
+            </div>
+          </div>
+          <div className="mt-6 flex items-center justify-between border-t border-line pt-4">
+            <span className="text-xs text-muted-foreground">Progress, not perfection</span>
+            <Target className="size-4 text-primary" />
+          </div>
+        </Card>
+
+        <div className="lg:col-span-3">
+          <InsightBanner practices={practices} entries={allEntries} />
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
