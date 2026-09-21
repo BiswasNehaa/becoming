@@ -7,8 +7,11 @@ import { Input } from "@/components/ui/input";
 import { DayNavHeader } from "@/components/DayNavHeader";
 import { ExerciseForm } from "@/components/health/ExerciseForm";
 import { ExerciseList } from "@/components/health/ExerciseList";
+import { HealthWeeklyReviewCard } from "@/components/health/HealthWeeklyReviewCard";
 import { StepsTracker } from "@/components/health/StepsTracker";
 import { useDayNav } from "@/hooks/useDayNav";
+import { computeHealthWeekStats, dailyActivitySeries, generateHealthWeeklyReview } from "@/lib/healthReview";
+import { lastDateIds } from "@/lib/streaks";
 import { useCollection } from "@/lib/store";
 import { DEFAULT_HEALTH_TARGETS, totalCaloriesBurned, totalExerciseMinutes, type ExerciseEntry, type HealthTargets, type StepsLog } from "@/lib/health";
 
@@ -26,6 +29,17 @@ export function Health() {
   const caloriesBurned = useMemo(() => totalCaloriesBurned(dayExercise), [dayExercise]);
   const exerciseMinutes = useMemo(() => totalExerciseMinutes(dayExercise), [dayExercise]);
   const daySteps = allSteps.find((s) => s.date === viewDate)?.steps ?? 0;
+
+  const { weeklyReview, chartDays } = useMemo(() => {
+    const thisWeekDays = lastDateIds(7);
+    const lastWeekDays = lastDateIds(14).slice(0, 7);
+    const thisWeek = computeHealthWeekStats(allExercise, allSteps, thisWeekDays, targets);
+    const lastWeek = computeHealthWeekStats(allExercise, allSteps, lastWeekDays, targets);
+    return {
+      weeklyReview: generateHealthWeeklyReview(thisWeek, lastWeek, thisWeekDays.length),
+      chartDays: dailyActivitySeries(allExercise, allSteps, thisWeekDays),
+    };
+  }, [allExercise, allSteps, targets]);
 
   function saveEntry(entry: ExerciseEntry) {
     setAllExercise((prev) => {
@@ -114,6 +128,16 @@ export function Health() {
         </CardHeader>
         <CardContent className="p-0 pt-4">
           <ExerciseList entries={dayExercise} onEdit={setEditingEntry} onDelete={deleteEntry} />
+        </CardContent>
+      </Card>
+
+      <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+        <CardHeader className="p-0">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Weekly review</p>
+          <CardTitle className="mt-1 font-display text-2xl font-semibold">Your week</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0 pt-5">
+          <HealthWeeklyReviewCard review={weeklyReview} days={chartDays} />
         </CardContent>
       </Card>
     </div>
