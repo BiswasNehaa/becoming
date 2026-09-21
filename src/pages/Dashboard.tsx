@@ -91,6 +91,40 @@ export function Dashboard() {
 
       <SyncErrorBanner error={entriesSyncError ?? practicesSyncError} />
 
+      <div className="grid gap-5 lg:grid-cols-2">
+        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+          <CardHeader className="flex-row items-center justify-between p-0 pb-4 space-y-0">
+            <CardTitle className="font-display text-lg font-semibold">Today&rsquo;s focus</CardTitle>
+            {focusPractices.length > 0 && (
+              <span className="text-xs text-muted-foreground">
+                Scheduled {focusPractices.length} &middot; Done {focusDoneToday}
+              </span>
+            )}
+          </CardHeader>
+          <CardContent className="p-0">
+            <TodayFocusList
+              practices={practices}
+              dayEntries={dayEntries}
+              onSetFocus={(id, targetMinutes) => updatePractice(id, { isFocus: true, targetMinutes })}
+              onUnsetFocus={(id) => updatePractice(id, { isFocus: false })}
+              onCreateFocus={(label, targetMinutes) => {
+                const created = addPractice(label, "sparkles", targetMinutes);
+                updatePractice(created.id, { isFocus: true });
+              }}
+            />
+          </CardContent>
+        </Card>
+
+        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+          <CardHeader className="p-0">
+            <CardTitle className="font-display text-lg font-semibold">To-do</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0 pt-4">
+            <TodoList />
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="grid gap-5 lg:grid-cols-5">
         <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none lg:col-span-2">
           <div className="flex items-center justify-between">
@@ -182,40 +216,6 @@ export function Dashboard() {
           </CardHeader>
           <CardContent className="p-0 pt-4">
             <CategoryBreakdown entries={dayEntries} categories={allCategories} />
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid gap-5 lg:grid-cols-2">
-        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
-          <CardHeader className="flex-row items-center justify-between p-0 pb-4 space-y-0">
-            <CardTitle className="font-display text-lg font-semibold">Today&rsquo;s focus</CardTitle>
-            {focusPractices.length > 0 && (
-              <span className="text-xs text-muted-foreground">
-                Scheduled {focusPractices.length} &middot; Done {focusDoneToday}
-              </span>
-            )}
-          </CardHeader>
-          <CardContent className="p-0">
-            <TodayFocusList
-              practices={practices}
-              dayEntries={dayEntries}
-              onSetFocus={(id, targetMinutes) => updatePractice(id, { isFocus: true, targetMinutes })}
-              onUnsetFocus={(id) => updatePractice(id, { isFocus: false })}
-              onCreateFocus={(label, targetMinutes) => {
-                const created = addPractice(label, "sparkles", targetMinutes);
-                updatePractice(created.id, { isFocus: true });
-              }}
-            />
-          </CardContent>
-        </Card>
-
-        <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
-          <CardHeader className="p-0">
-            <CardTitle className="font-display text-lg font-semibold">To-do</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0 pt-4">
-            <TodoList />
           </CardContent>
         </Card>
       </div>
