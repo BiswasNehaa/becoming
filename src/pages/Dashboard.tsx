@@ -6,6 +6,7 @@ import { DayNavHeader } from "@/components/DayNavHeader";
 import { HeaderSlot } from "@/components/HeaderSlot";
 import { ProgressRing } from "@/components/ProgressRing";
 import { SyncErrorBanner } from "@/components/SyncErrorBanner";
+import { HealthSnapshot } from "@/components/dashboard/HealthSnapshot";
 import { InsightBanner } from "@/components/dashboard/InsightBanner";
 import { LearningSnapshot } from "@/components/dashboard/LearningSnapshot";
 import { NutritionSnapshot } from "@/components/dashboard/NutritionSnapshot";
@@ -220,8 +221,9 @@ export function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <NutritionSnapshot />
+        <HealthSnapshot />
         <ReadingSnapshot />
         <LearningSnapshot />
         <ReflectionSnapshot />
