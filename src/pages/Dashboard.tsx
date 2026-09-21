@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DayNavHeader } from "@/components/DayNavHeader";
 import { HeaderSlot } from "@/components/HeaderSlot";
 import { ProgressRing } from "@/components/ProgressRing";
+import { SyncErrorBanner } from "@/components/SyncErrorBanner";
 import { InsightBanner } from "@/components/dashboard/InsightBanner";
 import { LearningSnapshot } from "@/components/dashboard/LearningSnapshot";
 import { NutritionSnapshot } from "@/components/dashboard/NutritionSnapshot";
@@ -37,8 +38,8 @@ function progressStatus(pct: number): { label: string; tone: string } {
 
 export function Dashboard() {
   const { viewDate, isToday, label, goPrev, goNext, goToday } = useDayNav();
-  const { items: allEntries, setItems: setAllEntries, loading } = useCollection<TimeEntry>("time_entries");
-  const { practices, addPractice, removePractice, updatePractice } = usePractices();
+  const { items: allEntries, setItems: setAllEntries, loading, syncError: entriesSyncError } = useCollection<TimeEntry>("time_entries");
+  const { practices, addPractice, removePractice, updatePractice, syncError: practicesSyncError } = usePractices();
   const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
 
   const allCategories = useMemo(() => [...CATEGORIES, ...practices.map(practiceToCategory)], [practices]);
@@ -87,6 +88,8 @@ export function Dashboard() {
         </span>
         <QuickAddDialog practices={practices} onQuickAdd={quickAdd} />
       </HeaderSlot>
+
+      <SyncErrorBanner error={entriesSyncError ?? practicesSyncError} />
 
       <div className="grid gap-5 lg:grid-cols-5">
         <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none lg:col-span-2">

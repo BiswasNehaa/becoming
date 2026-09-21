@@ -8,7 +8,7 @@ import { makeId, useCollection } from "@/lib/store";
  * account only ever has what they themselves added.
  */
 export function usePractices() {
-  const { items: practices, setItems, loading } = useCollection<Practice>("practices");
+  const { items: practices, setItems, loading, syncError } = useCollection<Practice>("practices");
 
   function addPractice(label: string, icon: PracticeIconKey, targetMinutes?: number): Practice {
     const next: Practice = { id: makeId(), label, icon, color: paletteColor(practices.length), targetMinutes };
@@ -28,5 +28,5 @@ export function usePractices() {
     setItems((prev) => prev.map((p) => (p.id === id ? { ...p, ...changes } : p)));
   }
 
-  return { practices, addPractice, removePractice, updatePractice, loading };
+  return { practices, addPractice, removePractice, updatePractice, loading, syncError };
 }

@@ -27,8 +27,11 @@ function apiUrl(collection: string) {
 
 async function currentUserId(): Promise<string | null> {
   if (!supabase) return null;
-  const { data } = await supabase.auth.getUser();
-  return data.user?.id ?? null;
+  // getSession (not getUser) so the SDK's own auto-refresh runs first if the
+  // access token has gone stale — a bare getUser() can fail right after a
+  // long-idle tab instead of quietly refreshing.
+  const { data } = await supabase.auth.getSession();
+  return data.session?.user.id ?? null;
 }
 
 async function readCollectionLocal<T>(collection: string): Promise<T[]> {
@@ -38,11 +41,12 @@ async function readCollectionLocal<T>(collection: string): Promise<T[]> {
 }
 
 async function writeCollectionLocal<T>(collection: string, items: T[]): Promise<void> {
-  await fetch(apiUrl(collection), {
+  const res = await fetch(apiUrl(collection), {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(items),
   });
+  if (!res.ok) throw new Error(`Failed to save ${collection} (${res.status})`);
 }
 
 async function readCollectionHosted<T>(collection: string): Promise<T[]> {
@@ -55,25 +59,28 @@ async function readCollectionHosted<T>(collection: string): Promise<T[]> {
 }
 
 async function writeCollectionHosted<T extends WithId>(collection: string, items: T[]): Promise<void> {
-  if (!supabase) return;
+  if (!supabase) throw new Error("Not connected to your account — nothing was saved.");
   const uid = await currentUserId();
-  if (!uid) return;
+  if (!uid) throw new Error("Your session expired — sign in again, then redo this.");
 
-  const { data: existing } = await supabase.from("records").select("id").eq("user_id", uid).eq("collection", collection);
+  const { data: existing, error: readError } = await supabase.from("records").select("id").eq("user_id", uid).eq("collection", collection);
+  if (readError) throw readError;
   const existingIds = new Set((existing ?? []).map((r) => r.id as string));
   const nextIds = new Set(items.map((i) => i.id));
   const staleIds = [...existingIds].filter((id) => !nextIds.has(id));
 
   if (items.length > 0) {
-    await supabase
+    const { error: upsertError } = await supabase
       .from("records")
       .upsert(
         items.map((item) => ({ user_id: uid, collection, id: item.id, data: item })),
         { onConflict: "user_id,collection,id" },
       );
+    if (upsertError) throw upsertError;
   }
   if (staleIds.length > 0) {
-    await supabase.from("records").delete().eq("user_id", uid).eq("collection", collection).in("id", staleIds);
+    const { error: deleteError } = await supabase.from("records").delete().eq("user_id", uid).eq("collection", collection).in("id", staleIds);
+    if (deleteError) throw deleteError;
   }
 }
 
@@ -94,6 +101,10 @@ export async function writeCollection<T extends WithId>(collection: string, item
 export function useCollection<T extends WithId>(collection: string) {
   const [items, setItems] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
+  // Set when a save silently failed (expired session, network blip, RLS
+  // error, ...) so the UI can say so instead of looking saved and quietly
+  // not being there on the next reload.
+  const [syncError, setSyncError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -110,14 +121,16 @@ export function useCollection<T extends WithId>(collection: string) {
     (next: T[] | ((prev: T[]) => T[])) => {
       setItems((prev) => {
         const resolved = typeof next === "function" ? (next as (prev: T[]) => T[])(prev) : next;
-        writeCollection(collection, resolved);
+        writeCollection(collection, resolved)
+          .then(() => setSyncError(null))
+          .catch((err: unknown) => setSyncError(err instanceof Error ? err.message : "Couldn't save that — check your connection and try again."));
         return resolved;
       });
     },
     [collection],
   );
 
-  return { items, setItems: setAndPersist, loading, refresh };
+  return { items, setItems: setAndPersist, loading, refresh, syncError };
 }
 
 export function makeId() {
