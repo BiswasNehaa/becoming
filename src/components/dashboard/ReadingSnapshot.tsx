@@ -17,7 +17,10 @@ export function ReadingSnapshot() {
         </div>
         {current ? (
           <>
-            <p className="mt-2 truncate font-display text-lg font-bold">{current.title}</p>
+            <div className="mt-2 flex items-baseline gap-1.5">
+              <p className="truncate font-display text-lg font-bold">{current.title}</p>
+              <span className="shrink-0 font-display text-sm font-bold text-sage">{progressPct(current)}%</span>
+            </div>
             <div className="mt-2 h-1 overflow-hidden rounded-full bg-accent">
               <div className="h-full rounded-full bg-sage" style={{ width: `${progressPct(current)}%` }} />
             </div>

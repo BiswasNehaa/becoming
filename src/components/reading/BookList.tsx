@@ -29,7 +29,7 @@ export function BookList({ books, onEdit, onDelete }: { books: Book[]; onEdit: (
                           <div className="h-full rounded-full bg-sage" style={{ width: `${progressPct(book)}%` }} />
                         </div>
                         <span className="text-[11px] text-muted-foreground">
-                          {book.currentPage}/{book.pages} pg
+                          {progressPct(book)}% &middot; {book.currentPage}/{book.pages} pg
                         </span>
                       </div>
                     )}
