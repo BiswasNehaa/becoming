@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { DayNavHeader } from "@/components/DayNavHeader";
+import { SyncErrorBanner } from "@/components/SyncErrorBanner";
 import { ExerciseForm } from "@/components/health/ExerciseForm";
 import { ExerciseList } from "@/components/health/ExerciseList";
 import { HealthWeeklyReviewCard } from "@/components/health/HealthWeeklyReviewCard";
@@ -17,9 +18,9 @@ import { DEFAULT_HEALTH_TARGETS, totalCaloriesBurned, totalExerciseMinutes, type
 
 export function Health() {
   const { viewDate, isToday, label, goPrev, goNext, goToday } = useDayNav();
-  const { items: allExercise, setItems: setAllExercise, loading } = useCollection<ExerciseEntry>("exercise_entries");
-  const { items: allSteps, setItems: setAllSteps } = useCollection<StepsLog>("steps_logs");
-  const { items: targetDocs, setItems: setTargetDocs } = useCollection<HealthTargets>("health_targets");
+  const { items: allExercise, setItems: setAllExercise, loading, syncError: exerciseSyncError } = useCollection<ExerciseEntry>("exercise_entries");
+  const { items: allSteps, setItems: setAllSteps, syncError: stepsSyncError } = useCollection<StepsLog>("steps_logs");
+  const { items: targetDocs, setItems: setTargetDocs, syncError: targetsSyncError } = useCollection<HealthTargets>("health_targets");
   const [editingEntry, setEditingEntry] = useState<ExerciseEntry | null>(null);
   const [editingGoal, setEditingGoal] = useState(false);
   const [goalDraft, setGoalDraft] = useState("");
@@ -66,6 +67,8 @@ export function Health() {
 
   return (
     <div className="subtle-rise space-y-5">
+      <SyncErrorBanner error={exerciseSyncError ?? stepsSyncError ?? targetsSyncError} />
+
       <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
         <DayNavHeader label={label} isToday={isToday} onPrev={goPrev} onNext={goNext} onToday={goToday} />
         {loading ? (

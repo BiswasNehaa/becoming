@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DayNavHeader } from "@/components/DayNavHeader";
+import { SyncErrorBanner } from "@/components/SyncErrorBanner";
 import { FoodEntryForm } from "@/components/nutrition/FoodEntryForm";
 import { MacroSummary } from "@/components/nutrition/MacroSummary";
 import { MealList } from "@/components/nutrition/MealList";
@@ -16,9 +17,9 @@ import { DEFAULT_TARGETS, totalMacros, type FoodEntry, type NutritionTargets, ty
 
 export function Nutrition() {
   const { viewDate, isToday, label, goPrev, goNext, goToday } = useDayNav();
-  const { items: allFood, setItems: setAllFood, loading } = useCollection<FoodEntry>("food_entries");
-  const { items: allWater, setItems: setAllWater } = useCollection<WaterEntry>("water_entries");
-  const { items: targetDocs, setItems: setTargetDocs } = useCollection<NutritionTargets>("nutrition_targets");
+  const { items: allFood, setItems: setAllFood, loading, syncError: foodSyncError } = useCollection<FoodEntry>("food_entries");
+  const { items: allWater, setItems: setAllWater, syncError: waterSyncError } = useCollection<WaterEntry>("water_entries");
+  const { items: targetDocs, setItems: setTargetDocs, syncError: targetsSyncError } = useCollection<NutritionTargets>("nutrition_targets");
   const [editingEntry, setEditingEntry] = useState<FoodEntry | null>(null);
 
   // Merge (not just fall back to) DEFAULT_TARGETS — an existing saved doc
@@ -64,6 +65,8 @@ export function Nutrition() {
 
   return (
     <div className="subtle-rise space-y-5">
+      <SyncErrorBanner error={foodSyncError ?? waterSyncError ?? targetsSyncError} />
+
       <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
         <DayNavHeader label={label} isToday={isToday} onPrev={goPrev} onNext={goNext} onToday={goToday} />
         {loading ? (

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { BookOpen, Flame, Library } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SyncErrorBanner } from "@/components/SyncErrorBanner";
 import { BookForm } from "@/components/reading/BookForm";
 import { BookList } from "@/components/reading/BookList";
 import { ReadingWeeklyReviewCard } from "@/components/reading/ReadingWeeklyReviewCard";
@@ -14,9 +15,9 @@ import type { Book, ReadingSession, VaultEntry } from "@/lib/reading";
 import type { TimeEntry } from "@/lib/types";
 
 export function Reading() {
-  const { items: books, setItems: setBooks, loading: booksLoading } = useCollection<Book>("books");
-  const { items: vault, setItems: setVault } = useCollection<VaultEntry>("reading_vault");
-  const { items: sessions, setItems: setSessions } = useCollection<ReadingSession>("reading_sessions");
+  const { items: books, setItems: setBooks, loading: booksLoading, syncError: booksSyncError } = useCollection<Book>("books");
+  const { items: vault, setItems: setVault, syncError: vaultSyncError } = useCollection<VaultEntry>("reading_vault");
+  const { items: sessions, setItems: setSessions, syncError: sessionsSyncError } = useCollection<ReadingSession>("reading_sessions");
   const { items: timeEntries } = useCollection<TimeEntry>("time_entries");
   const [editingBook, setEditingBook] = useState<Book | null>(null);
 
@@ -68,6 +69,8 @@ export function Reading() {
 
   return (
     <div className="subtle-rise space-y-5">
+      <SyncErrorBanner error={booksSyncError ?? vaultSyncError ?? sessionsSyncError} />
+
       <div className="grid grid-cols-3 gap-3">
         <Card className="glass-panel rounded-2xl border-0 p-4 text-center shadow-none">
           <Library className="mx-auto size-5 text-sage" />

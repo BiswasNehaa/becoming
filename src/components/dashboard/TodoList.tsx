@@ -3,6 +3,7 @@ import { Calendar, Check, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SyncErrorBanner } from "@/components/SyncErrorBanner";
 import type { CalendarEvent } from "@/lib/calendarEvents";
 import { makeId, todayId, useCollection } from "@/lib/store";
 import { PRIORITIES, sortByPriority, type Priority, type TodoItem } from "@/lib/todos";
@@ -14,7 +15,7 @@ function nextPriority(current: Priority | undefined): Priority | undefined {
 }
 
 export function TodoList() {
-  const { items, setItems, loading } = useCollection<TodoItem>("todos");
+  const { items, setItems, loading, syncError } = useCollection<TodoItem>("todos");
   const { items: events } = useCollection<CalendarEvent>("calendar_events");
   const [text, setText] = useState("");
   const [priority, setPriority] = useState<Priority | undefined>(undefined);
@@ -49,6 +50,8 @@ export function TodoList() {
 
   return (
     <div>
+      <SyncErrorBanner error={syncError} />
+
       <form onSubmit={addTodo} className="mb-3 flex gap-2">
         <Input value={text} onChange={(e) => setText(e.target.value)} placeholder="Add something for today…" className="flex-1" />
         <div className="flex shrink-0 items-center gap-1 rounded-md border border-input px-1.5">

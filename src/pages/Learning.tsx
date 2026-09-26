@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { BrainCircuit, Clock3, Flame } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SyncErrorBanner } from "@/components/SyncErrorBanner";
 import { RoadmapBoard } from "@/components/learning/RoadmapBoard";
 import { TopicForm } from "@/components/learning/TopicForm";
 import { useCollection, todayId } from "@/lib/store";
@@ -11,7 +12,7 @@ import { uniqueGroups, type LearningTopic } from "@/lib/learning";
 import type { TimeEntry } from "@/lib/types";
 
 export function Learning() {
-  const { items: topics, setItems: setTopics, loading } = useCollection<LearningTopic>("learning_topics");
+  const { items: topics, setItems: setTopics, loading, syncError } = useCollection<LearningTopic>("learning_topics");
   const { items: timeEntries } = useCollection<TimeEntry>("time_entries");
   const [editingTopic, setEditingTopic] = useState<LearningTopic | null>(null);
 
@@ -38,6 +39,8 @@ export function Learning() {
 
   return (
     <div className="subtle-rise space-y-5">
+      <SyncErrorBanner error={syncError} />
+
       <div className="grid grid-cols-3 gap-3">
         <Card className="glass-panel rounded-2xl border-0 p-4 text-center shadow-none">
           <Clock3 className="mx-auto size-5 text-glow" />
