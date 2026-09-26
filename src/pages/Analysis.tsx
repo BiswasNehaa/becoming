@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DomainGrid } from "@/components/analysis/DomainGrid";
 import { MovementSummary } from "@/components/analysis/MovementSummary";
+import { PracticeHeatmapBoard } from "@/components/analysis/PracticeHeatmapBoard";
 import { computeDomainStats, generateAnalysisMovements, periodDateRanges, type AnalysisData, type AnalysisPeriod } from "@/lib/analysis";
 import type { ExerciseEntry, StepsLog } from "@/lib/health";
 import type { FoodEntry, WaterEntry } from "@/lib/nutrition";
@@ -65,6 +66,17 @@ export function Analysis() {
         </CardHeader>
         <CardContent className="p-0 pt-4">
           <MovementSummary improving={movements.improving} lagging={movements.lagging} />
+        </CardContent>
+      </Card>
+
+      <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+        <CardHeader className="p-0">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Last 16 weeks</p>
+          <CardTitle className="mt-1 font-display text-xl font-semibold">Consistency</CardTitle>
+          <p className="mt-1 text-sm text-muted-foreground">Darker means more of that day&rsquo;s target got done &mdash; a plain streak shows solid once it happened at all.</p>
+        </CardHeader>
+        <CardContent className="p-0 pt-4">
+          <PracticeHeatmapBoard practices={practices} entries={entries} />
         </CardContent>
       </Card>
     </div>
