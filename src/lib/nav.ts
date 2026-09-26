@@ -1,4 +1,4 @@
-import { BookOpen, BrainCircuit, HeartPulse, Home, PenLine, Utensils, type LucideIcon } from "lucide-react";
+import { BarChart3, BookOpen, BrainCircuit, HeartPulse, Home, PenLine, Utensils, type LucideIcon } from "lucide-react";
 
 export type NavItem = {
   to: string;
@@ -6,10 +6,10 @@ export type NavItem = {
   icon: LucideIcon;
 };
 
-// Sections not in this list yet (digital, analytics, calendar, settings...)
-// are deliberately deferred past the MVP — see the build plan. Hobbies/
-// streaks live on the Dashboard itself (the time log + streak board already
-// cover guitar/chess/crochet), so there's no separate page.
+// Sections not in this list yet (digital, calendar, settings...) are
+// deliberately deferred past the MVP — see the build plan. Hobbies/streaks
+// live on the Dashboard itself (the time log + streak board already cover
+// guitar/chess/crochet), so there's no separate page.
 export const navItems: NavItem[] = [
   { to: "/", label: "Dashboard", icon: Home },
   { to: "/learning", label: "Learning", icon: BrainCircuit },
@@ -17,4 +17,5 @@ export const navItems: NavItem[] = [
   { to: "/nutrition", label: "Nutrition", icon: Utensils },
   { to: "/health", label: "Health", icon: HeartPulse },
   { to: "/reflections", label: "Reflections", icon: PenLine },
+  { to: "/analysis", label: "Analysis", icon: BarChart3 },
 ];

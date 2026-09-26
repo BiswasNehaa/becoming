@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import { AppShell } from "@/components/layout/AppShell";
 import { AuthGate } from "@/components/AuthGate";
+import { Analysis } from "@/pages/Analysis";
 import { Dashboard } from "@/pages/Dashboard";
 import { Health } from "@/pages/Health";
 import { Learning } from "@/pages/Learning";
@@ -21,6 +22,7 @@ function App() {
             <Route path="nutrition" element={<Nutrition />} />
             <Route path="health" element={<Health />} />
             <Route path="reflections" element={<Reflections />} />
+            <Route path="analysis" element={<Analysis />} />
           </Route>
         </Routes>
       </BrowserRouter>
