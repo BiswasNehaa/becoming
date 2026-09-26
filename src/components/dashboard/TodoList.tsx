@@ -1,19 +1,22 @@
 import { useState } from "react";
-import { Check, Plus, Trash2 } from "lucide-react";
+import { Calendar, Check, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { CalendarEvent } from "@/lib/calendarEvents";
 import { makeId, todayId, useCollection } from "@/lib/store";
 import type { TodoItem } from "@/lib/todos";
 import { cn } from "@/lib/utils";
 
 export function TodoList() {
   const { items, setItems, loading } = useCollection<TodoItem>("todos");
+  const { items: events } = useCollection<CalendarEvent>("calendar_events");
   const [text, setText] = useState("");
 
   const today = todayId();
   const open = items.filter((t) => !t.done);
   const doneToday = items.filter((t) => t.done && t.completedDate === today);
+  const todayEvents = events.filter((e) => e.date === today).sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""));
 
   function addTodo(e: React.FormEvent) {
     e.preventDefault();
@@ -42,9 +45,25 @@ export function TodoList() {
         </Button>
       </form>
 
+      {todayEvents.length > 0 && (
+        <ul className="mb-1 space-y-1">
+          {todayEvents.map((event) => (
+            <li key={event.id} className="flex items-center gap-3 rounded-lg bg-accent/40 px-1 py-1.5">
+              <span className="grid size-5 shrink-0 place-items-center rounded-full text-amber">
+                <Calendar className="size-3.5" />
+              </span>
+              <span className="min-w-0 flex-1 truncate text-sm">
+                {event.title}
+                {event.time && <span className="text-muted-foreground"> · {event.time}</span>}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
       {loading ? (
         <p className="text-sm text-muted-foreground">Loading…</p>
-      ) : open.length === 0 && doneToday.length === 0 ? (
+      ) : open.length === 0 && doneToday.length === 0 && todayEvents.length === 0 ? (
         <p className="text-sm text-muted-foreground">Nothing on the list — add what you're planning for today.</p>
       ) : (
         <ul className="space-y-1">
