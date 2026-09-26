@@ -5,25 +5,32 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { CalendarEvent } from "@/lib/calendarEvents";
 import { makeId, todayId, useCollection } from "@/lib/store";
-import type { TodoItem } from "@/lib/todos";
+import { PRIORITIES, sortByPriority, type Priority, type TodoItem } from "@/lib/todos";
 import { cn } from "@/lib/utils";
+
+function nextPriority(current: Priority | undefined): Priority | undefined {
+  const order: (Priority | undefined)[] = ["high", "medium", "low", undefined];
+  return order[(order.indexOf(current) + 1) % order.length];
+}
 
 export function TodoList() {
   const { items, setItems, loading } = useCollection<TodoItem>("todos");
   const { items: events } = useCollection<CalendarEvent>("calendar_events");
   const [text, setText] = useState("");
+  const [priority, setPriority] = useState<Priority | undefined>(undefined);
 
   const today = todayId();
-  const open = items.filter((t) => !t.done);
+  const open = sortByPriority(items.filter((t) => !t.done));
   const doneToday = items.filter((t) => t.done && t.completedDate === today);
   const todayEvents = events.filter((e) => e.date === today).sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""));
 
   function addTodo(e: React.FormEvent) {
     e.preventDefault();
     if (!text.trim()) return;
-    const next: TodoItem = { id: makeId(), text: text.trim(), done: false, createdDate: today };
+    const next: TodoItem = { id: makeId(), text: text.trim(), done: false, createdDate: today, priority };
     setItems((prev) => [...prev, next]);
     setText("");
+    setPriority(undefined);
   }
 
   function toggle(id: string) {
@@ -36,10 +43,36 @@ export function TodoList() {
     setItems((prev) => prev.filter((t) => t.id !== id));
   }
 
+  function cyclePriority(id: string) {
+    setItems((prev) => prev.map((t) => (t.id === id ? { ...t, priority: nextPriority(t.priority) } : t)));
+  }
+
   return (
     <div>
       <form onSubmit={addTodo} className="mb-3 flex gap-2">
         <Input value={text} onChange={(e) => setText(e.target.value)} placeholder="Add something for today…" className="flex-1" />
+        <div className="flex shrink-0 items-center gap-1 rounded-md border border-input px-1.5">
+          {PRIORITIES.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              aria-label={`${p.label} priority`}
+              aria-pressed={priority === p.id}
+              onClick={() => setPriority((cur) => (cur === p.id ? undefined : p.id))}
+              className="grid size-6 place-items-center"
+            >
+              <span
+                className="rounded-full transition-all"
+                style={{
+                  backgroundColor: p.color,
+                  width: priority === p.id ? 10 : 8,
+                  height: priority === p.id ? 10 : 8,
+                  opacity: priority === undefined || priority === p.id ? 1 : 0.3,
+                }}
+              />
+            </button>
+          ))}
+        </div>
         <Button type="submit" size="icon" aria-label="Add to-do">
           <Plus className="size-4" />
         </Button>
@@ -79,6 +112,17 @@ export function TodoList() {
                 )}
               >
                 <Check className="size-3" />
+              </button>
+              <button
+                type="button"
+                aria-label={todo.priority ? `${todo.priority} priority — click to change` : "No priority — click to set"}
+                onClick={() => cyclePriority(todo.id)}
+                className="grid size-5 shrink-0 place-items-center rounded-full hover:bg-line"
+              >
+                <span
+                  className="size-2 rounded-full border border-line"
+                  style={todo.priority ? { backgroundColor: PRIORITIES.find((p) => p.id === todo.priority)?.color, borderColor: "transparent" } : undefined}
+                />
               </button>
               <span className={cn("min-w-0 flex-1 truncate text-sm", todo.done && "text-muted-foreground line-through decoration-line")}>{todo.text}</span>
               <button
