@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DataCleanupCard } from "@/components/analysis/DataCleanupCard";
 import { DomainGrid } from "@/components/analysis/DomainGrid";
 import { MovementSummary } from "@/components/analysis/MovementSummary";
 import { PracticeHeatmapBoard } from "@/components/analysis/PracticeHeatmapBoard";
@@ -77,6 +78,16 @@ export function Analysis() {
         </CardHeader>
         <CardContent className="p-0 pt-4">
           <PracticeHeatmapBoard practices={practices} entries={entries} />
+        </CardContent>
+      </Card>
+
+      <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+        <CardHeader className="p-0">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Storage</p>
+          <CardTitle className="mt-1 font-display text-xl font-semibold">Data &amp; cleanup</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0 pt-4">
+          <DataCleanupCard />
         </CardContent>
       </Card>
     </div>
