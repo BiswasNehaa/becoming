@@ -1,4 +1,4 @@
-import { totalWaterMl, type FoodEntry, type NutritionTargets, type WaterEntry } from "@/lib/nutrition";
+import { macroStatus, totalWaterMl, type FoodEntry, type NutritionTargets, type WaterEntry } from "@/lib/nutrition";
 
 export type NutritionWeekStats = {
   avgCalories: number;
@@ -8,6 +8,10 @@ export type NutritionWeekStats = {
   daysCalorieOnTrack: number;
   daysProteinGoalReached: number;
   daysWaterGoalReached: number;
+  /** Days calories landed notably over target (macroStatus "above") — the
+   * same on-track/above classification used everywhere else, just reading
+   * the opposite end of it. Framed as "over days," not "cheat days." */
+  daysOverTarget: number;
 };
 
 function dayTotals(food: FoodEntry[], water: WaterEntry[], date: string) {
@@ -29,6 +33,7 @@ export function computeNutritionWeekStats(food: FoodEntry[], water: WaterEntry[]
   let daysCalorieOnTrack = 0;
   let daysProteinGoalReached = 0;
   let daysWaterGoalReached = 0;
+  let daysOverTarget = 0;
 
   for (const date of days) {
     const t = dayTotals(food, water, date);
@@ -39,6 +44,7 @@ export function computeNutritionWeekStats(food: FoodEntry[], water: WaterEntry[]
     if (targets.calories > 0 && t.calories >= targets.calories * 0.9 && t.calories <= targets.calories * 1.1) daysCalorieOnTrack++;
     if (targets.proteinG > 0 && t.proteinG >= targets.proteinG) daysProteinGoalReached++;
     if (targets.waterMl > 0 && t.waterMl >= targets.waterMl) daysWaterGoalReached++;
+    if (t.calories > 0 && macroStatus(t.calories, targets.calories, "ceiling") === "above") daysOverTarget++;
   }
 
   const n = days.length || 1;
@@ -50,6 +56,7 @@ export function computeNutritionWeekStats(food: FoodEntry[], water: WaterEntry[]
     daysCalorieOnTrack,
     daysProteinGoalReached,
     daysWaterGoalReached,
+    daysOverTarget,
   };
 }
 

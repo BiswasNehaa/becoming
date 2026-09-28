@@ -30,12 +30,17 @@ export function Nutrition() {
   const dayWater = useMemo(() => allWater.filter((e) => e.date === viewDate), [allWater, viewDate]);
   const totals = useMemo(() => totalMacros(dayFood), [dayFood]);
 
-  const weeklyReview = useMemo(() => {
+  const { weeklyReview, weekOverDays, monthOverDays } = useMemo(() => {
     const thisWeekDays = lastDateIds(7);
     const lastWeekDays = lastDateIds(14).slice(0, 7);
     const thisWeek = computeNutritionWeekStats(allFood, allWater, thisWeekDays, targets);
     const lastWeek = computeNutritionWeekStats(allFood, allWater, lastWeekDays, targets);
-    return generateNutritionWeeklyReview(thisWeek, lastWeek, targets, thisWeekDays.length);
+    const thisMonth = computeNutritionWeekStats(allFood, allWater, lastDateIds(30), targets);
+    return {
+      weeklyReview: generateNutritionWeeklyReview(thisWeek, lastWeek, targets, thisWeekDays.length),
+      weekOverDays: thisWeek.daysOverTarget,
+      monthOverDays: thisMonth.daysOverTarget,
+    };
   }, [allFood, allWater, targets]);
 
   function saveEntry(entry: FoodEntry) {
@@ -106,7 +111,7 @@ export function Nutrition() {
           <CardTitle className="mt-1 font-display text-2xl font-semibold">Your week</CardTitle>
         </CardHeader>
         <CardContent className="p-0 pt-5">
-          <NutritionWeeklyReviewCard review={weeklyReview} />
+          <NutritionWeeklyReviewCard review={weeklyReview} weekOverDays={weekOverDays} monthOverDays={monthOverDays} />
         </CardContent>
       </Card>
     </div>
