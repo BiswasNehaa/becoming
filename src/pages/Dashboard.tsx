@@ -23,8 +23,10 @@ import { EntryForm } from "@/components/timelog/EntryForm";
 import { EntryList } from "@/components/timelog/EntryList";
 import { StreakBoard } from "@/components/timelog/StreakBoard";
 import { useDayNav } from "@/hooks/useDayNav";
+import { useNutritionLinkedStreaks } from "@/hooks/useNutritionLinkedStreaks";
 import { usePractices } from "@/hooks/usePractices";
 import { CATEGORIES } from "@/lib/categories";
+import { DEFAULT_TARGETS, type FoodEntry, type NutritionTargets } from "@/lib/nutrition";
 import { practiceToCategory } from "@/lib/practices";
 import { computeOverallDayStreak } from "@/lib/streaks";
 import { makeId, todayId, useCollection } from "@/lib/store";
@@ -41,7 +43,12 @@ export function Dashboard() {
   const { viewDate, isToday, label, goPrev, goNext, goToday } = useDayNav();
   const { items: allEntries, setItems: setAllEntries, loading, syncError: entriesSyncError } = useCollection<TimeEntry>("time_entries");
   const { practices, addPractice, removePractice, updatePractice, syncError: practicesSyncError } = usePractices();
+  const { items: food } = useCollection<FoodEntry>("food_entries");
+  const { items: nutritionTargetDocs } = useCollection<NutritionTargets>("nutrition_targets");
   const [editingEntry, setEditingEntry] = useState<TimeEntry | null>(null);
+
+  const nutritionTargets = { ...DEFAULT_TARGETS, ...nutritionTargetDocs[0] };
+  useNutritionLinkedStreaks(practices, food, nutritionTargets, setAllEntries);
 
   const allCategories = useMemo(() => [...CATEGORIES, ...practices.map(practiceToCategory)], [practices]);
   const dayEntries = useMemo(() => allEntries.filter((e) => e.date === viewDate), [allEntries, viewDate]);

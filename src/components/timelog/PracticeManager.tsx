@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Star, X } from "lucide-react";
+import { Plus, Salad, Star, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,19 +12,21 @@ export function PracticeManager({
   onRemove,
 }: {
   practices: Practice[];
-  onAdd: (label: string, icon: PracticeIconKey) => void;
+  onAdd: (label: string, icon: PracticeIconKey, nutritionLinked?: boolean) => void;
   onRemove: (id: string) => void;
 }) {
   const [adding, setAdding] = useState(false);
   const [label, setLabel] = useState("");
   const [icon, setIcon] = useState<PracticeIconKey>("sparkles");
+  const [nutritionLinked, setNutritionLinked] = useState(false);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!label.trim()) return;
-    onAdd(label.trim(), icon);
+    onAdd(label.trim(), icon, nutritionLinked || undefined);
     setLabel("");
     setIcon("sparkles");
+    setNutritionLinked(false);
     setAdding(false);
   }
 
@@ -37,6 +39,7 @@ export function PracticeManager({
             <Icon className="size-3.5" style={{ color: p.color }} />
             {p.label}
             {p.isFocus ? <Star className="size-3 fill-current text-amber" aria-label="Today's focus" /> : null}
+            {p.nutritionLinked ? <Salad className="size-3 text-sage" aria-label="Auto-completes from Nutrition" /> : null}
             {p.targetMinutes ? <span className="text-muted-foreground">· {p.targetMinutes}m</span> : null}
             <button
               type="button"
@@ -75,6 +78,19 @@ export function PracticeManager({
               );
             })}
           </div>
+          <button
+            type="button"
+            aria-label="Auto-complete from Nutrition instead of logging time"
+            aria-pressed={nutritionLinked}
+            onClick={() => setNutritionLinked((v) => !v)}
+            className={cn(
+              "flex h-6 items-center gap-1 rounded-full px-2 text-[11px] text-muted-foreground hover:bg-line",
+              nutritionLinked && "bg-sage/20 text-sage hover:bg-sage/20",
+            )}
+            title="Auto-complete from Nutrition instead of logging time"
+          >
+            <Salad className="size-3" /> Nutrition
+          </button>
           <Button type="submit" size="sm" className="h-6 rounded-full px-2.5 text-xs">
             Add
           </Button>

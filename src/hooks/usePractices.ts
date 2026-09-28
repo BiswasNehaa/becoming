@@ -10,8 +10,8 @@ import { makeId, useCollection } from "@/lib/store";
 export function usePractices() {
   const { items: practices, setItems, loading, syncError } = useCollection<Practice>("practices");
 
-  function addPractice(label: string, icon: PracticeIconKey, targetMinutes?: number): Practice {
-    const next: Practice = { id: makeId(), label, icon, color: paletteColor(practices.length), targetMinutes };
+  function addPractice(label: string, icon: PracticeIconKey, targetMinutes?: number, nutritionLinked?: boolean): Practice {
+    const next: Practice = { id: makeId(), label, icon, color: paletteColor(practices.length), targetMinutes, nutritionLinked };
     // Functional update: addPractice + updatePractice sometimes get called
     // back-to-back in the same event handler (e.g. create-and-focus in one
     // go) — computing the next array from the stale `practices` closure

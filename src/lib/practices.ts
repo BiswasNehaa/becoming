@@ -65,7 +65,10 @@ export function paletteColor(index: number): string {
  * rather than a fixed list. `isFocus` marks it as one of today's one-or-two
  * highlighted priorities (separate from just being a streak worth logging);
  * `targetMinutes` is the time goal for that focus, shown as progress
- * instead of a plain yes/no. */
+ * instead of a plain yes/no. `nutritionLinked` opts a streak (e.g. "Healthy
+ * meal") out of manual time-logging — it auto-completes for the day
+ * whenever that day's Nutrition logging lands close to target, instead of
+ * needing a separate fake time-block entry. */
 export type Practice = {
   id: string;
   label: string;
@@ -73,6 +76,7 @@ export type Practice = {
   color: string;
   isFocus?: boolean;
   targetMinutes?: number;
+  nutritionLinked?: boolean;
 };
 
 export function practiceToCategory(practice: Practice): Category {
