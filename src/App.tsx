@@ -10,6 +10,7 @@ import { Learning } from "@/pages/Learning";
 import { Nutrition } from "@/pages/Nutrition";
 import { Reading } from "@/pages/Reading";
 import { Reflections } from "@/pages/Reflections";
+import { Reminders } from "@/pages/Reminders";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route path="reflections" element={<Reflections />} />
             <Route path="analysis" element={<Analysis />} />
             <Route path="calendar" element={<Calendar />} />
+            <Route path="reminders" element={<Reminders />} />
           </Route>
         </Routes>
       </BrowserRouter>
