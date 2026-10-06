@@ -8,10 +8,12 @@ import type { CalendarEvent } from "@/lib/calendarEvents";
 
 export function EventForm({
   editingEvent,
+  presetDate,
   onSave,
   onCancelEdit,
 }: {
   editingEvent: CalendarEvent | null;
+  presetDate?: string;
   onSave: (event: CalendarEvent) => void;
   onCancelEdit: () => void;
 }) {
@@ -20,6 +22,10 @@ export function EventForm({
   const [time, setTime] = useState("");
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (presetDate && !editingEvent) setDate(presetDate);
+  }, [presetDate, editingEvent]);
 
   useEffect(() => {
     if (editingEvent) {

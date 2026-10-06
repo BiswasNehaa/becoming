@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SyncErrorBanner } from "@/components/SyncErrorBanner";
 import { EventForm } from "@/components/calendar/EventForm";
+import { MonthGrid } from "@/components/calendar/MonthGrid";
 import { EventList } from "@/components/calendar/EventList";
 import type { CalendarEvent } from "@/lib/calendarEvents";
 import { useCollection } from "@/lib/store";
@@ -10,6 +11,7 @@ import { useCollection } from "@/lib/store";
 export function Calendar() {
   const { items: events, setItems: setEvents, loading, syncError } = useCollection<CalendarEvent>("calendar_events");
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
+  const [presetDate, setPresetDate] = useState<string | undefined>(undefined);
 
   function saveEvent(event: CalendarEvent) {
     setEvents((prev) => {
@@ -28,13 +30,17 @@ export function Calendar() {
     <div className="subtle-rise space-y-5">
       <SyncErrorBanner error={syncError} />
 
+      <Card className="glass-panel rounded-3xl border-0 p-4 shadow-none sm:p-6">
+        {loading ? <p className="text-sm text-muted-foreground">Loading…</p> : <MonthGrid events={events} onPickDate={(d) => { setEditingEvent(null); setPresetDate(d); }} onEditEvent={setEditingEvent} />}
+      </Card>
+
       <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
         <CardHeader className="p-0">
           <CardTitle className="font-display text-lg font-semibold">{editingEvent ? "Edit event" : "Add an event"}</CardTitle>
           <p className="text-sm text-muted-foreground">Meetings, deadlines, anything date-specific — it&rsquo;ll show up in that day&rsquo;s to-do too.</p>
         </CardHeader>
         <CardContent className="p-0 pt-4">
-          <EventForm editingEvent={editingEvent} onSave={saveEvent} onCancelEdit={() => setEditingEvent(null)} />
+          <EventForm editingEvent={editingEvent} presetDate={presetDate} onSave={saveEvent} onCancelEdit={() => setEditingEvent(null)} />
         </CardContent>
       </Card>
 
