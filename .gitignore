@@ -26,3 +26,6 @@ data/
 *.njsproj
 *.sln
 *.sw?
+
+# Private sign-in session for the becoming helper scripts
+.becoming-session.json

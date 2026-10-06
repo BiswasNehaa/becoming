@@ -9,7 +9,9 @@
     "dev:api": "tsx watch server/index.ts",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "becoming:login": "node scripts/login.mjs",
+    "becoming": "node scripts/becoming.mjs"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.2.6",
