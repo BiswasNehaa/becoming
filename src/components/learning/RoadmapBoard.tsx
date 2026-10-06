@@ -2,6 +2,7 @@ import { Pencil, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { TOPIC_STATUSES, topicProgressPct, uniqueGroups, type LearningTopic } from "@/lib/learning";
+import { formatDuration } from "@/lib/timeMath";
 import { cn } from "@/lib/utils";
 
 const STATUS_TONE: Record<string, string> = {
@@ -47,7 +48,7 @@ export function RoadmapBoard({ topics, onEdit, onDelete }: { topics: LearningTop
                       </div>
                     )}
                     <p className="mt-1 text-[11px] text-muted-foreground">
-                      {topic.targetHours > 0 ? `${pct}% · ${topic.hoursSpent}/${topic.targetHours}h` : `${topic.hoursSpent}h`}
+                      {topic.targetHours > 0 ? `${pct}% · ${formatDuration(Math.round(topic.hoursSpent * 60))} of ${formatDuration(Math.round(topic.targetHours * 60))}` : formatDuration(Math.round(topic.hoursSpent * 60))}
                       {topic.resources ? ` · ${topic.resources}` : ""}
                     </p>
                   </li>

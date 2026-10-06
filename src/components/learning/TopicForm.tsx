@@ -34,8 +34,8 @@ export function TopicForm({
       setGroup(editingTopic.group);
       setName(editingTopic.name);
       setStatus(editingTopic.status);
-      setTargetHours(editingTopic.targetHours ? String(editingTopic.targetHours) : "");
-      setHoursSpent(String(editingTopic.hoursSpent));
+      setTargetHours(editingTopic.targetHours ? String(Math.round(editingTopic.targetHours * 60)) : "");
+      setHoursSpent(String(Math.round(editingTopic.hoursSpent * 60)));
       setResources(editingTopic.resources ?? "");
       setError("");
     }
@@ -65,8 +65,8 @@ export function TopicForm({
       group: group.trim(),
       name: name.trim(),
       status,
-      hoursSpent: numberField(hoursSpent),
-      targetHours: numberField(targetHours),
+      hoursSpent: numberField(hoursSpent) / 60,
+      targetHours: numberField(targetHours) / 60,
       resources: resources.trim() || undefined,
     });
     if (!editingTopic) reset();
@@ -104,11 +104,11 @@ export function TopicForm({
           </Select>
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Hours spent</label>
+          <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Minutes spent</label>
           <Input type="number" min="0" step="any" inputMode="decimal" value={hoursSpent} onChange={(e) => setHoursSpent(e.target.value)} className="w-20" />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Target hrs (optional)</label>
+          <label className="text-[11px] uppercase tracking-wide text-muted-foreground">Target min (optional)</label>
           <Input type="number" min="0" step="any" inputMode="decimal" value={targetHours} onChange={(e) => setTargetHours(e.target.value)} className="w-24" />
         </div>
         <div className="flex min-w-40 flex-1 flex-col gap-1">
