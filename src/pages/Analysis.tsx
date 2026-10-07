@@ -13,6 +13,7 @@ import type { Practice } from "@/lib/practices";
 import type { Book, ReadingSession } from "@/lib/reading";
 import type { DailyReflection } from "@/lib/reflections";
 import { useCollection } from "@/lib/store";
+import { formatDuration } from "@/lib/timeMath";
 import type { TimeEntry } from "@/lib/types";
 
 const PERIOD_LABEL: Record<AnalysisPeriod, string> = { day: "Today", week: "This week", month: "This month" };
@@ -39,6 +40,12 @@ export function Analysis() {
     return { stats: thisStats, movements: generateAnalysisMovements(thisStats, lastStats) };
   }, [period, entries, practices, food, water, books, readingSessions, exercise, steps, reflections]);
 
+  const { wasteNow, wastePrev } = useMemo(() => {
+    const { thisPeriod, lastPeriod } = periodDateRanges(period);
+    const sum = (days: string[]) => entries.filter((e) => e.categoryId === "waste" && days.includes(e.date)).reduce((t, e) => t + Math.max(0, e.endMin - e.startMin), 0);
+    return { wasteNow: sum(thisPeriod), wastePrev: sum(lastPeriod) };
+  }, [period, entries]);
+
   return (
     <div className="subtle-rise space-y-5">
       <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
@@ -58,6 +65,16 @@ export function Analysis() {
         <CardContent className="p-0">
           <DomainGrid stats={stats} />
         </CardContent>
+      </Card>
+
+      <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">
+        <CardHeader className="p-0">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">Wasted time</p>
+          <CardTitle className="mt-1 font-display text-xl font-semibold">{formatDuration(wasteNow)} {PERIOD_LABEL[period].toLowerCase()}</CardTitle>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {wastePrev > 0 ? `${formatDuration(wastePrev)} in the ${period} before.` : "Nothing logged as wasted in the period before."} Log it by choosing "Wasted time" when you add a block — seeing it is the first step to cutting it.
+          </p>
+        </CardHeader>
       </Card>
 
       <Card className="glass-panel rounded-3xl border-0 p-6 shadow-none sm:p-8">

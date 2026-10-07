@@ -1,4 +1,4 @@
-import { Briefcase, Moon, MoreHorizontal, Smartphone, Utensils, type LucideIcon } from "lucide-react";
+import { Briefcase, Hourglass, Moon, MoreHorizontal, Smartphone, Utensils, type LucideIcon } from "lucide-react";
 
 export type Category = {
   id: string;
@@ -16,6 +16,7 @@ export const CATEGORIES: Category[] = [
   { id: "meals", label: "Meals", icon: Utensils, color: "oklch(0.78 0.13 95)" },
   { id: "screen", label: "Screen / Reels", icon: Smartphone, color: "oklch(0.72 0.17 40)" },
   { id: "work", label: "Work / Life admin", icon: Briefcase, color: "oklch(0.72 0.16 330)" },
+  { id: "waste", label: "Wasted time", icon: Hourglass, color: "oklch(0.62 0.17 25)" },
   { id: "other", label: "Other", icon: MoreHorizontal, color: "oklch(0.6 0.02 275)" },
 ];
 
