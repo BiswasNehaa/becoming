@@ -1,4 +1,4 @@
-import { BarChart3, Bell, BookOpen, BrainCircuit, CalendarDays, HeartPulse, Home, PenLine, Utensils, type LucideIcon } from "lucide-react";
+import { BarChart3, Bell, BookOpen, ClipboardPaste, BrainCircuit, CalendarDays, HeartPulse, Home, PenLine, Utensils, type LucideIcon } from "lucide-react";
 
 export type NavItem = {
   to: string;
@@ -20,4 +20,5 @@ export const navItems: NavItem[] = [
   { to: "/analysis", label: "Analysis", icon: BarChart3 },
   { to: "/calendar", label: "Calendar", icon: CalendarDays },
   { to: "/reminders", label: "Reminders", icon: Bell },
+  { to: "/quick-log", label: "Quick log", icon: ClipboardPaste },
 ];

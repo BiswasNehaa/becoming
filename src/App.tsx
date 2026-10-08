@@ -10,6 +10,7 @@ import { Learning } from "@/pages/Learning";
 import { Nutrition } from "@/pages/Nutrition";
 import { Reading } from "@/pages/Reading";
 import { Reflections } from "@/pages/Reflections";
+import { QuickLog } from "@/pages/QuickLog";
 import { Reminders } from "@/pages/Reminders";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
             <Route path="analysis" element={<Analysis />} />
             <Route path="calendar" element={<Calendar />} />
             <Route path="reminders" element={<Reminders />} />
+            <Route path="quick-log" element={<QuickLog />} />
           </Route>
         </Routes>
       </BrowserRouter>
