@@ -51,6 +51,13 @@ export function computeCategoryStreak(categoryId: string, entries: TimeEntry[], 
   return { categoryId, current, last7Count, last7Minutes };
 }
 
+/** Streak across several category ids at once — folds them into one id so
+ * the single-category logic above can be reused unchanged. */
+export function computeGroupStreak(ids: string[], entries: TimeEntry[]): CategoryStreak {
+  const set = new Set(ids);
+  return computeCategoryStreak("group", entries.map((e) => (set.has(e.categoryId) ? { ...e, categoryId: "group" } : e)));
+}
+
 export function loggedDatesForCategory(categoryId: string, entries: TimeEntry[]): Set<string> {
   const dates = new Set<string>();
   for (const entry of entries) {

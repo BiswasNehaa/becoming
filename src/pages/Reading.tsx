@@ -10,7 +10,8 @@ import { VaultForm } from "@/components/reading/VaultForm";
 import { VaultList } from "@/components/reading/VaultList";
 import { computeReadingWeekStats, generateReadingWeeklyReview } from "@/lib/readingReview";
 import { makeId, todayId, useCollection } from "@/lib/store";
-import { computeCategoryStreak, lastDateIds } from "@/lib/streaks";
+import { READING_LABELS, practiceIdsMatching, type Practice } from "@/lib/practices";
+import { computeGroupStreak, lastDateIds } from "@/lib/streaks";
 import type { Book, ReadingSession, VaultEntry } from "@/lib/reading";
 import type { TimeEntry } from "@/lib/types";
 
@@ -19,9 +20,10 @@ export function Reading() {
   const { items: vault, setItems: setVault, syncError: vaultSyncError } = useCollection<VaultEntry>("reading_vault");
   const { items: sessions, setItems: setSessions, syncError: sessionsSyncError } = useCollection<ReadingSession>("reading_sessions");
   const { items: timeEntries } = useCollection<TimeEntry>("time_entries");
+  const { items: practices } = useCollection<Practice>("practices");
   const [editingBook, setEditingBook] = useState<Book | null>(null);
 
-  const streak = useMemo(() => computeCategoryStreak("reading", timeEntries), [timeEntries]);
+  const streak = useMemo(() => computeGroupStreak(practiceIdsMatching(practices, "reading", READING_LABELS), timeEntries), [practices, timeEntries]);
   const completedCount = books.filter((b) => b.status === "completed").length;
   const pagesRead = books.reduce((sum, b) => sum + (b.status === "completed" ? b.pages : b.currentPage), 0);
 

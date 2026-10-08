@@ -2,19 +2,22 @@ import { BrainCircuit } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Card } from "@/components/ui/card";
-import { computeCategoryStreak } from "@/lib/streaks";
+import { LEARNING_LABELS, practiceIdsMatching, type Practice } from "@/lib/practices";
+import { computeGroupStreak } from "@/lib/streaks";
 import { todayId, useCollection } from "@/lib/store";
 import { formatDuration } from "@/lib/timeMath";
 import type { TimeEntry } from "@/lib/types";
 
 export function LearningSnapshot() {
   const { items: timeEntries } = useCollection<TimeEntry>("time_entries");
+  const { items: practices } = useCollection<Practice>("practices");
+  const learningIds = practiceIdsMatching(practices, "learning", LEARNING_LABELS);
 
   const monthPrefix = todayId().slice(0, 7);
   const monthMinutes = timeEntries
-    .filter((e) => e.categoryId === "learning" && e.date.startsWith(monthPrefix))
+    .filter((e) => learningIds.includes(e.categoryId) && e.date.startsWith(monthPrefix))
     .reduce((sum, e) => sum + Math.max(0, e.endMin - e.startMin), 0);
-  const streak = computeCategoryStreak("learning", timeEntries);
+  const streak = computeGroupStreak(learningIds, timeEntries);
 
   return (
     <Link to="/learning">

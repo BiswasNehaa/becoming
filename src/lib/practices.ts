@@ -79,6 +79,17 @@ export type Practice = {
   nutritionLinked?: boolean;
 };
 
+/** Ids that count as a built-in area like "learning" or "reading": the
+ * old fixed id, plus any streak the person created under a matching name
+ * (their own streaks get random ids, so matching by id alone misses them). */
+export function practiceIdsMatching(practices: Practice[], builtInId: string, labels: string[]): string[] {
+  const wanted = new Set(labels.map((l) => l.trim().toLowerCase()));
+  return [builtInId, ...practices.filter((p) => wanted.has(p.label.trim().toLowerCase())).map((p) => p.id)];
+}
+
+export const LEARNING_LABELS = ["learning", "studying", "study"];
+export const READING_LABELS = ["reading", "read"];
+
 export function practiceToCategory(practice: Practice): Category {
   return { id: practice.id, label: practice.label, icon: PRACTICE_ICONS[practice.icon], color: practice.color };
 }

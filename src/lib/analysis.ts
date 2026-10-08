@@ -1,7 +1,7 @@
 import type { Book, ReadingSession } from "@/lib/reading";
 import type { ExerciseEntry, StepsLog } from "@/lib/health";
 import type { FoodEntry, WaterEntry } from "@/lib/nutrition";
-import type { Practice } from "@/lib/practices";
+import { LEARNING_LABELS, practiceIdsMatching, type Practice } from "@/lib/practices";
 import type { DailyReflection } from "@/lib/reflections";
 import { lastDateIds } from "@/lib/streaks";
 import type { TimeEntry } from "@/lib/types";
@@ -42,10 +42,11 @@ function hasReflectionContent(r: DailyReflection | undefined): boolean {
 export function computeDomainStats(days: string[], data: AnalysisData): DomainStat[] {
   const daySet = new Set(days);
   const practiceIds = new Set(data.practices.map((p) => p.id));
+  const learningIds = new Set(practiceIdsMatching(data.practices, "learning", LEARNING_LABELS));
 
   const practiceDates = new Set(data.entries.filter((e) => daySet.has(e.date) && practiceIds.has(e.categoryId)).map((e) => e.date));
-  const learningMinutes = data.entries.filter((e) => daySet.has(e.date) && e.categoryId === "learning").reduce((sum, e) => sum + Math.max(0, e.endMin - e.startMin), 0);
-  const learningDates = new Set(data.entries.filter((e) => daySet.has(e.date) && e.categoryId === "learning").map((e) => e.date));
+  const learningMinutes = data.entries.filter((e) => daySet.has(e.date) && learningIds.has(e.categoryId)).reduce((sum, e) => sum + Math.max(0, e.endMin - e.startMin), 0);
+  const learningDates = new Set(data.entries.filter((e) => daySet.has(e.date) && learningIds.has(e.categoryId)).map((e) => e.date));
 
   const foodInRange = data.food.filter((f) => daySet.has(f.date));
   const waterInRange = data.water.filter((w) => daySet.has(w.date));

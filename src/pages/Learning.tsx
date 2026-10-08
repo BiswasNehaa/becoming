@@ -6,7 +6,8 @@ import { SyncErrorBanner } from "@/components/SyncErrorBanner";
 import { RoadmapBoard } from "@/components/learning/RoadmapBoard";
 import { TopicForm } from "@/components/learning/TopicForm";
 import { useCollection, todayId } from "@/lib/store";
-import { computeCategoryStreak } from "@/lib/streaks";
+import { LEARNING_LABELS, practiceIdsMatching, type Practice } from "@/lib/practices";
+import { computeGroupStreak } from "@/lib/streaks";
 import { formatDuration } from "@/lib/timeMath";
 import { uniqueGroups, type LearningTopic } from "@/lib/learning";
 import type { TimeEntry } from "@/lib/types";
@@ -14,15 +15,17 @@ import type { TimeEntry } from "@/lib/types";
 export function Learning() {
   const { items: topics, setItems: setTopics, loading, syncError } = useCollection<LearningTopic>("learning_topics");
   const { items: timeEntries } = useCollection<TimeEntry>("time_entries");
+  const { items: practices } = useCollection<Practice>("practices");
+  const learningIds = useMemo(() => practiceIdsMatching(practices, "learning", LEARNING_LABELS), [practices]);
   const [editingTopic, setEditingTopic] = useState<LearningTopic | null>(null);
 
-  const streak = useMemo(() => computeCategoryStreak("learning", timeEntries), [timeEntries]);
+  const streak = useMemo(() => computeGroupStreak(learningIds, timeEntries), [learningIds, timeEntries]);
   const monthMinutes = useMemo(() => {
     const monthPrefix = todayId().slice(0, 7);
     return timeEntries
-      .filter((e) => e.categoryId === "learning" && e.date.startsWith(monthPrefix))
+      .filter((e) => learningIds.includes(e.categoryId) && e.date.startsWith(monthPrefix))
       .reduce((sum, e) => sum + Math.max(0, e.endMin - e.startMin), 0);
-  }, [timeEntries]);
+  }, [learningIds, timeEntries]);
 
   function saveTopic(topic: LearningTopic) {
     setTopics((prev) => {
