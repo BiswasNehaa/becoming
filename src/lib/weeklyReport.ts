@@ -22,7 +22,7 @@ function daysWithAny7(dateHasEntry: (date: string) => boolean): number {
 export function reflectionWeeklyPct(reflections: DailyReflection[]): number {
   const has = (d: string) => {
     const r = reflections.find((x) => x.date === d);
-    return !!r && (r.mood !== null || Object.values(r.checks).some(Boolean) || !!r.learned || !!r.improveTomorrow);
+    return !!r && (r.mood !== null || !!r.productivity || Object.values(r.checks).some(Boolean) || !!r.learned || !!r.improveTomorrow);
   };
   return Math.round((daysWithAny7(has) / 7) * 100);
 }

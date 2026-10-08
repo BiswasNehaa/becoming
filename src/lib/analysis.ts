@@ -36,7 +36,7 @@ export type DomainStat = {
 };
 
 function hasReflectionContent(r: DailyReflection | undefined): boolean {
-  return !!r && (r.mood !== null || Object.values(r.checks).some(Boolean) || !!r.learned || !!r.improveTomorrow);
+  return !!r && (r.mood !== null || !!r.productivity || Object.values(r.checks).some(Boolean) || !!r.learned || !!r.improveTomorrow);
 }
 
 export function computeDomainStats(days: string[], data: AnalysisData): DomainStat[] {

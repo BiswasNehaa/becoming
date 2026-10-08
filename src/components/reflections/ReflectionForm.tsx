@@ -3,7 +3,7 @@ import { Check } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { CHECK_ITEMS, MOODS, type DailyReflection } from "@/lib/reflections";
+import { CHECK_ITEMS, MOODS, PRODUCTIVITY_LEVELS, type DailyReflection } from "@/lib/reflections";
 import { cn } from "@/lib/utils";
 
 export function ReflectionForm({ reflection, onSave }: { reflection: DailyReflection; onSave: (r: DailyReflection) => void }) {
@@ -35,6 +35,27 @@ export function ReflectionForm({ reflection, onSave }: { reflection: DailyReflec
               onClick={() => save({ ...draft, mood: m.id })}
             >
               <span className="mr-1">{m.emoji}</span> {m.label}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <p className="mb-2 text-xs uppercase tracking-widest text-muted-foreground">How productive was today?</p>
+        <div className="grid grid-cols-5 gap-2">
+          {PRODUCTIVITY_LEVELS.map((p) => (
+            <Button
+              key={p.value}
+              type="button"
+              variant="outline"
+              className={cn(
+                "h-auto flex-col gap-0.5 rounded-xl border-line bg-accent/40 px-1 py-2.5 text-xs",
+                draft.productivity === p.value && "border-primary bg-primary/10 text-primary",
+              )}
+              onClick={() => save({ ...draft, productivity: draft.productivity === p.value ? null : p.value })}
+            >
+              <span className="font-display text-lg font-bold">{p.value}</span>
+              <span className="text-[10px] leading-tight">{p.label}</span>
             </Button>
           ))}
         </div>
