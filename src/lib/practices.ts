@@ -77,6 +77,9 @@ export type Practice = {
   isFocus?: boolean;
   targetMinutes?: number;
   nutritionLinked?: boolean;
+  /** Also counts toward the Learning totals/streak while keeping its own
+   * separate streak (e.g. DSA is its own thing and also studying). */
+  countsAsLearning?: boolean;
 };
 
 /** Ids that count as a built-in area like "learning" or "reading": the
@@ -84,7 +87,7 @@ export type Practice = {
  * (their own streaks get random ids, so matching by id alone misses them). */
 export function practiceIdsMatching(practices: Practice[], builtInId: string, labels: string[]): string[] {
   const wanted = new Set(labels.map((l) => l.trim().toLowerCase()));
-  return [builtInId, ...practices.filter((p) => wanted.has(p.label.trim().toLowerCase())).map((p) => p.id)];
+  return [builtInId, ...practices.filter((p) => wanted.has(p.label.trim().toLowerCase()) || (builtInId === "learning" && p.countsAsLearning)).map((p) => p.id)];
 }
 
 export const LEARNING_LABELS = ["learning", "studying", "study"];

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Salad, Star, X } from "lucide-react";
+import { GraduationCap, Plus, Salad, Star, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,10 +10,12 @@ export function PracticeManager({
   practices,
   onAdd,
   onRemove,
+  onToggleLearning,
 }: {
   practices: Practice[];
   onAdd: (label: string, icon: PracticeIconKey, nutritionLinked?: boolean) => void;
   onRemove: (id: string) => void;
+  onToggleLearning: (id: string, value: boolean) => void;
 }) {
   const [adding, setAdding] = useState(false);
   const [label, setLabel] = useState("");
@@ -41,6 +43,15 @@ export function PracticeManager({
             {p.isFocus ? <Star className="size-3 fill-current text-amber" aria-label="Today's focus" /> : null}
             {p.nutritionLinked ? <Salad className="size-3 text-sage" aria-label="Auto-completes from Nutrition" /> : null}
             {p.targetMinutes ? <span className="text-muted-foreground">· {p.targetMinutes}m</span> : null}
+            <button
+              type="button"
+              aria-label={p.countsAsLearning ? `${p.label} counts as learning — click to stop` : `Count ${p.label} as learning too`}
+              title={p.countsAsLearning ? "Counts toward Learning too (click to stop)" : "Also count this toward Learning"}
+              onClick={() => onToggleLearning(p.id, !p.countsAsLearning)}
+              className={cn("grid size-4 place-items-center rounded-full hover:bg-line", p.countsAsLearning ? "text-violet" : "text-muted-foreground/50")}
+            >
+              <GraduationCap className="size-3" />
+            </button>
             <button
               type="button"
               aria-label={`Remove ${p.label} from your streaks`}

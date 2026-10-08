@@ -12,11 +12,13 @@ export function StreakBoard({
   practices,
   onAddPractice,
   onRemovePractice,
+  onToggleLearning,
 }: {
   entries: TimeEntry[];
   practices: Practice[];
   onAddPractice: (label: string, icon: PracticeIconKey, targetMinutes?: number, nutritionLinked?: boolean) => void;
   onRemovePractice: (id: string) => void;
+  onToggleLearning: (id: string, value: boolean) => void;
 }) {
   const days = lastDateIds(STRIP_DAYS);
   const today = todayId();
@@ -27,6 +29,7 @@ export function StreakBoard({
         practices={practices}
         onAdd={(label, icon, nutritionLinked) => onAddPractice(label, icon, undefined, nutritionLinked)}
         onRemove={onRemovePractice}
+        onToggleLearning={onToggleLearning}
       />
       {practices.length === 0 ? (
         <p className="text-sm text-muted-foreground">No streaks yet &mdash; add whatever you actually want to track above.</p>

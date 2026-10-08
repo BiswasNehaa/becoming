@@ -242,7 +242,7 @@ export function Dashboard() {
           <p className="text-sm text-muted-foreground">Last 21 days, and this week&rsquo;s count &mdash; built from the log, no separate check-in needed.</p>
         </CardHeader>
         <CardContent className="p-0 pt-4">
-          <StreakBoard entries={allEntries} practices={practices} onAddPractice={addPractice} onRemovePractice={removePractice} />
+          <StreakBoard entries={allEntries} practices={practices} onAddPractice={addPractice} onRemovePractice={removePractice} onToggleLearning={(id, value) => updatePractice(id, { countsAsLearning: value })} />
         </CardContent>
       </Card>
 
